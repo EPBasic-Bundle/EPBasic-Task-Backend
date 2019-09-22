@@ -40,7 +40,11 @@ class SubjectController extends Controller
             $user = app('App\Http\Controllers\UserController')
                 ->getAuth($request->header('Authorization'));
 
-            $validate = Validator::make($params_array, ['name' => 'required']);
+            $validate = Validator::make($params_array, [
+                'name' => 'required',
+                'primary_color' => 'required',
+                'secondary_color' => 'required',
+            ]);
 
             if ($validate->fails()) {
                 $data = array(
@@ -53,6 +57,8 @@ class SubjectController extends Controller
 
                 $subject->user_id = $user->sub;
                 $subject->name = $params->name;
+                $subject->primary_color = $params->primary_color;
+                $subject->secondary_color = $params->secondary_color;
                 $subject->save();
 
                 $data = array(
@@ -92,7 +98,11 @@ class SubjectController extends Controller
                 $subject = Subject::where('id', $id)->where('user_id', $user->sub)->first();
 
                 if ($subject) {
-                    $subject->name = $subject->name;
+                    $subject->name = $params->name;
+                    $subject->primary_color = $params->primary_color;
+                    $subject->secondary_color = $params->secondary_color;
+
+                    $subject->update();
 
                     $data = array(
                         'status' => 'success',
@@ -110,6 +120,30 @@ class SubjectController extends Controller
                 'status' => 'error',
                 'code' => 200,
             );
+        }
+
+        return response()->json($data, $data['code']);
+    }
+
+    //Eliminar asignatura
+    public function destroy(Request $request, $id)
+    {
+        $user = app('App\Http\Controllers\UserController')
+                ->getAuth($request->header('Authorization'));
+
+        $subject = Subject::where('user_id', $user->sub)->where('id', $id)->first();
+        if ($subject && is_object($subject)) {
+            $subject->delete();
+
+            $data = array(
+                'status' => 'success',
+                'code' => 200,
+            );
+        } else {
+            $data = [
+                'code' => 200,
+                'status' => 'error',
+            ];
         }
 
         return response()->json($data, $data['code']);

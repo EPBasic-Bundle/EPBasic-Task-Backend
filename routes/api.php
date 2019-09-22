@@ -19,4 +19,5 @@ Route::post('timetable', 'TimetableController@store');
 
 Route::get('subjects', 'SubjectController@index');
 Route::post('subject', 'SubjectController@store');
-Route::put('subject/update', 'SubjectController@update');
+Route::put('subject/{id}', 'SubjectController@update');
+Route::delete('subject/{id}', 'SubjectController@destroy');

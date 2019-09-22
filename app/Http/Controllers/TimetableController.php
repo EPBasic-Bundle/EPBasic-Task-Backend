@@ -22,17 +22,26 @@ class TimetableController extends Controller
         $user = app('App\Http\Controllers\UserController')
             ->getAuth($request->header('Authorization'));
 
-        $timetable = Timetable::where('user_id', $user->sub)->first()->load('subjects')->load('hours');
+        $timetable = Timetable::where('user_id', $user->sub)->first();
 
-        $subjects = array_chunk($timetable->subjects->toArray(), 5);
-        $timetable->subjects = null;
+        if ($timetable && is_object($timetable)) {
+            $timetable->load('subjects')->load('hours');
 
-        return response()->json([
-            'code' => 200,
-            'status' => 'success',
-            'timetable' => $timetable,
-            'subjects' => $subjects
-        ]);
+            $subjects = array_chunk($timetable->subjects->toArray(), 5);
+            $timetable->subjects = null;
+
+            return response()->json([
+                'code' => 200,
+                'status' => 'success',
+                'timetable' => $timetable,
+                'subjects' => $subjects
+            ]);
+        } else {
+            return response()->json([
+                'code' => 200,
+                'status' => 'error',
+            ]);
+        }
     }
 
     /**********************************************************************************************/
