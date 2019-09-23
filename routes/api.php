@@ -18,6 +18,13 @@ Route::get('timetable', 'TimetableController@index');
 Route::post('timetable', 'TimetableController@store');
 
 Route::get('subjects', 'SubjectController@index');
+Route::get('subject/{id}', 'SubjectController@detail');
 Route::post('subject', 'SubjectController@store');
 Route::put('subject/{id}', 'SubjectController@update');
 Route::delete('subject/{id}', 'SubjectController@destroy');
+
+Route::get('books/{subject_id}', 'BookController@index');
+Route::get('books/{id}', 'BookController@detail');
+Route::post('book', 'BookController@store');
+Route::put('book/{id}', 'BookController@update');
+Route::delete('book/{id}', 'BookController@destroy');
