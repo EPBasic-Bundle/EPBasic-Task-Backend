@@ -6,12 +6,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Validator;
 
-use App\Book;
+use App\Unity;
 use App\Subject;
 
-class BookController extends Controller
+class UnityController extends Controller
 {
-    // Libros por asignatura
+    // Unidades por asignatura
     public function index(Request $request, $subject_id)
     {
         $user = app('App\Http\Controllers\UserController')
@@ -20,36 +20,36 @@ class BookController extends Controller
         $subject = Subject::where('user_id', $user->sub)->where('id', $subject_id)->first();
 
         if ($subject) {
-            $books = Book::where('subject_id', $subject_id)->get();
+            $units = Unity::where('subject_id', $subject_id)->get();
 
             return response()->json([
                 'code' => 200,
                 'status' => 'success',
-                'books' => $books,
+                'units' => $units,
             ]);
         }
     }
 
-    // Libro por ID
+    // Unidad por ID
     public function detail(Request $request, $id)
     {
         $user = app('App\Http\Controllers\UserController')
                 ->getAuth($request->header('Authorization'));
 
-        $book = Book::where('id', $id)->first();
+        $unity = Unity::where('id', $id)->first();
 
-        $subject = Subject::where('user_id', $user->sub)->where('id', $book->subject_id)->first();
+        $subject = Subject::where('user_id', $user->sub)->where('id', $unity->subject_id)->first();
 
         if ($subject) {
             return response()->json([
                 'code' => 200,
                 'status' => 'success',
-                'book' => $book,
+                'unity' => $unity,
             ]);
         }
     }
 
-    // Añadir libro
+    // Añadir unidad
     public function store(Request $request)
     {
         $json = $request->input('json', null);
@@ -62,8 +62,7 @@ class BookController extends Controller
 
             $validate = Validator::make($params_array, [
                 'subject_id' => 'required',
-                'name' => 'required',
-                'pages_quantity' => 'required',
+                'number' => 'required',
             ]);
 
             if ($validate->fails()) {
@@ -76,13 +75,11 @@ class BookController extends Controller
                 $subject = Subject::where('user_id', $user->sub)->where('id', $params->subject_id)->first();
 
                 if ($subject && is_object($subject)) {
-                    $book = new Book();
+                    $unity = new Unity();
 
-                    $book->name = $params->name;
-                    $book->subject_id = $params->subject_id;
-                    $book->pages_quantity = $params->pages_quantity;
-                    $book->image = $params->image;
-                    $book->save();
+                    $unity->subject_id = $params->subject_id;
+                    $unity->number = $params->number;
+                    $unity->save();
 
                     $data = array(
                         'status' => 'success',
@@ -105,7 +102,7 @@ class BookController extends Controller
         return response()->json($data, $data['code']);
     }
 
-    // Actualizar libro
+    // Actualizar unidad
     public function update(Request $request, $id)
     {
         $json = $request->input('json', null);
@@ -114,9 +111,8 @@ class BookController extends Controller
 
         if (!empty($params_array)) {
             $validate = Validator::make($params_array, [
-                'name' => 'required',
                 'subject_id' => 'required',
-                'pages_quantity' => 'required'
+                'number' => 'required',
             ]);
 
             if ($validate->fails()) {
@@ -128,18 +124,15 @@ class BookController extends Controller
                 $user = app('App\Http\Controllers\UserController')
                     ->getAuth($request->header('Authorization'));
 
-                $book = Book::find($id);
+                $unity = Unity::find($id);
 
-                if ($book && is_object($book)) {
-                    $subject = Subject::where('user_id', $user->sub)->where('id', $book->subject_id)->first();
+                if ($unity && is_object($unity)) {
+                    $subject = Subject::where('user_id', $user->sub)->where('id', $unity->subject_id)->first();
 
                     if ($subject && is_object($subject)) {
-                        $book->name = $params->name;
-                        $book->subject_id = $params->subject_id;
-                        $book->pages_quantity = $params->pages_quantity;
-                        $book->image = $params->image;
+                        $unity->number = $params->number;
 
-                        $book->update();
+                        $unity->update();
 
                         $data = array(
                             'status' => 'success',
@@ -158,19 +151,19 @@ class BookController extends Controller
         }
     }
 
-    //Eliminar libro
+    //Eliminar unidad
     public function destroy(Request $request, $id)
     {
         $user = app('App\Http\Controllers\UserController')
                 ->getAuth($request->header('Authorization'));
 
-        $book = Book::find($id);
+        $unity = Unity::find($id);
 
-        if ($book && is_object($book)) {
-            $subject = Subject::where('user_id', $user->sub)->where('id', $book->subject_id)->first();
+        if ($unity && is_object($unity)) {
+            $subject = Subject::where('user_id', $user->sub)->where('id', $unity->subject_id)->first();
 
             if ($subject && is_object($subject)) {
-                $book->delete();
+                $unity->delete();
 
                 $data = array(
                     'status' => 'success',

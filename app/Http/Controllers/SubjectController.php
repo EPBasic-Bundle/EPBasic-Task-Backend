@@ -112,7 +112,7 @@ class SubjectController extends Controller
 
                 $subject = Subject::where('id', $id)->where('user_id', $user->sub)->first();
 
-                if ($subject) {
+                if ($subject && is_object($subject)) {
                     $subject->name = $params->name;
                     $subject->primary_color = $params->primary_color;
                     $subject->secondary_color = $params->secondary_color;

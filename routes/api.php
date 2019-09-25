@@ -28,3 +28,9 @@ Route::get('books/{id}', 'BookController@detail');
 Route::post('book', 'BookController@store');
 Route::put('book/{id}', 'BookController@update');
 Route::delete('book/{id}', 'BookController@destroy');
+
+Route::get('units/{subject_id}', 'UnityController@index');
+Route::get('unity/{id}', 'UnityController@detail');
+Route::post('unity', 'UnityController@store');
+Route::put('unity/{id}', 'UnityController@update');
+Route::delete('unity/{id}', 'UnityController@destroy');
