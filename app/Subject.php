@@ -11,4 +11,8 @@ class Subject extends Model
     public function books(){
         return $this->hasMany('App\Book', 'subject_id');
     }
+
+    public function units(){
+        return $this->hasMany('App\Unity', 'subject_id');
+    }
 }

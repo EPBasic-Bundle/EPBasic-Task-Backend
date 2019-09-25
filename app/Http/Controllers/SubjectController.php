@@ -30,18 +30,22 @@ class SubjectController extends Controller
     }
 
     // Asignatura
-    public function detail(Request $request, $id)
+    public function detail(Request $request, $id, $json = true)
     {
         $user = app('App\Http\Controllers\UserController')
                 ->getAuth($request->header('Authorization'));
 
         $subject = Subject::where('id', $id)->where('user_id', $user->sub)->first();
 
-        return response()->json([
-            'code' => 200,
-            'status' => 'success',
-            'subject' => $subject,
-        ]);
+        if ($json == true) {
+            return response()->json([
+                'code' => 200,
+                'status' => 'success',
+                'subject' => $subject,
+            ]);
+        } else {
+            return $subject;
+        }
     }
 
     // Añadir asignatura
@@ -79,6 +83,7 @@ class SubjectController extends Controller
                 $data = array(
                     'status' => 'success',
                     'code' => 200,
+                    'subject' => $this->detail($request, $subject->id, false)
                 );
             }
         } else {
@@ -122,6 +127,7 @@ class SubjectController extends Controller
                     $data = array(
                         'status' => 'success',
                         'code' => 200,
+                        'subject' => $this->detail($request, $subject->id, false)
                     );
                 } else {
                     $data = array(
@@ -150,9 +156,14 @@ class SubjectController extends Controller
 
         if ($subject && is_object($subject)) {
             $subject->load('books');
+            $subject->load('units');
 
             foreach ($subject->books as $book) {
                 $book->delete();
+            }
+
+            foreach ($subject->units as $unity) {
+                $unity->delete();
             }
 
             $subject->delete();

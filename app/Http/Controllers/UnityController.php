@@ -31,7 +31,7 @@ class UnityController extends Controller
     }
 
     // Unidad por ID
-    public function detail(Request $request, $id)
+    public function detail(Request $request, $id, $json = true)
     {
         $user = app('App\Http\Controllers\UserController')
                 ->getAuth($request->header('Authorization'));
@@ -41,11 +41,15 @@ class UnityController extends Controller
         $subject = Subject::where('user_id', $user->sub)->where('id', $unity->subject_id)->first();
 
         if ($subject) {
-            return response()->json([
-                'code' => 200,
-                'status' => 'success',
-                'unity' => $unity,
-            ]);
+            if ($json == true) {
+                return response()->json([
+                    'code' => 200,
+                    'status' => 'success',
+                    'unity' => $unity,
+                ]);
+            } else {
+                return $unity;
+            }
         }
     }
 
@@ -84,6 +88,7 @@ class UnityController extends Controller
                     $data = array(
                         'status' => 'success',
                         'code' => 200,
+                        'unity' => $this->detail($request, $unity->id, false)
                     );
                 } else {
                     $data = array(
@@ -137,6 +142,7 @@ class UnityController extends Controller
                         $data = array(
                             'status' => 'success',
                             'code' => 200,
+                            'unity' => $this->detail($request, $unity->id, false)
                         );
                     } else {
                         $data = array(

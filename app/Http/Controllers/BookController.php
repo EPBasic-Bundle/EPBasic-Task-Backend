@@ -31,7 +31,7 @@ class BookController extends Controller
     }
 
     // Libro por ID
-    public function detail(Request $request, $id)
+    public function detail(Request $request, $id, $json = true)
     {
         $user = app('App\Http\Controllers\UserController')
                 ->getAuth($request->header('Authorization'));
@@ -41,11 +41,15 @@ class BookController extends Controller
         $subject = Subject::where('user_id', $user->sub)->where('id', $book->subject_id)->first();
 
         if ($subject) {
-            return response()->json([
-                'code' => 200,
-                'status' => 'success',
-                'book' => $book,
-            ]);
+            if ($json == true) {
+                return response()->json([
+                    'code' => 200,
+                    'status' => 'success',
+                    'book' => $book,
+                ]);
+            } else {
+                return $book;
+            }
         }
     }
 
@@ -87,6 +91,7 @@ class BookController extends Controller
                     $data = array(
                         'status' => 'success',
                         'code' => 200,
+                        'book' => $this->detail($request, $book->id, false)
                     );
                 } else {
                     $data = array(
@@ -144,6 +149,7 @@ class BookController extends Controller
                         $data = array(
                             'status' => 'success',
                             'code' => 200,
+                            'book' => $this->detail($request, $book->id, false)
                         );
                     } else {
                         $data = array(
