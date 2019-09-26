@@ -34,3 +34,9 @@ Route::get('unity/{id}', 'UnityController@detail');
 Route::post('unity', 'UnityController@store');
 Route::put('unity/{id}', 'UnityController@update');
 Route::delete('unity/{id}', 'UnityController@destroy');
+
+Route::get('tasks/{unity_id}', 'TaskController@index');
+Route::get('task/{id}', 'TaskController@detail');
+Route::post('task', 'TaskController@store');
+Route::put('task/{id}', 'TaskController@update');
+Route::delete('task/{id}', 'TaskController@destroy');
