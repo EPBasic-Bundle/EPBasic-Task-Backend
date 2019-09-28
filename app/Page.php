@@ -9,6 +9,6 @@ class Page extends Model
     protected $table = 'pages';
 
     public function exercises(){
-        return $this->hasMany('App\Exercise', 'page_id');
+        return $this->hasMany('App\Exercise', 'page_id')->orderBy('number');
     }
 }

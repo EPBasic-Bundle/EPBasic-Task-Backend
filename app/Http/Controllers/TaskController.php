@@ -41,6 +41,31 @@ class TaskController extends Controller
         }
     }
 
+    // Tareas
+    public function indexToDo(Request $request, $subject_id)
+    {
+        $user = app('App\Http\Controllers\UserController')
+                ->getAuth($request->header('Authorization'));
+
+        $subject = Subject::where('user_id', $user->sub)->where('id', $subject_id)->first();
+
+        if ($subject) {
+            $tasks = Task::where('subject_id', $subject->id)->where('done', 0)->get()->load('pages');
+
+            foreach($tasks as $task) {
+                foreach($task['pages'] as $page) {
+                    $page->load('exercises');
+                }
+            }
+
+            return response()->json([
+                'code' => 200,
+                'status' => 'success',
+                'tasks' => $tasks,
+            ]);
+        }
+    }
+
     // Tareas por ID
     public function detail(Request $request, $id, $json = true)
     {
@@ -84,7 +109,6 @@ class TaskController extends Controller
             $validate = Validator::make($params_array, [
                 'id' => 'required',
                 'subject_id' => 'required',
-                'book_id' => 'required',
                 'title' => 'required',
                 'description' => 'required',
                 //'delivery_date' => 'required',
@@ -152,7 +176,6 @@ class TaskController extends Controller
             $validate = Validator::make($params_array, [
                 'id' => 'required',
                 'subject_id' => 'required',
-                'book_id' => 'required',
                 'title' => 'required',
                 'description' => 'required',
             ]);

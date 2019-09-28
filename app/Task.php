@@ -9,6 +9,6 @@ class Task extends Model
     protected $table = 'tasks';
 
     public function pages(){
-        return $this->hasMany('App\Page', 'task_id');
+        return $this->hasMany('App\Page', 'task_id')->orderBy('number');
     }
 }
