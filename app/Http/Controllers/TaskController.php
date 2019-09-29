@@ -107,12 +107,9 @@ class TaskController extends Controller
                 ->getAuth($request->header('Authorization'));
 
             $validate = Validator::make($params_array, [
-                'id' => 'required',
                 'subject_id' => 'required',
                 'title' => 'required',
-                'description' => 'required',
                 //'delivery_date' => 'required',
-                //'done' => 'required',
             ]);
 
             if ($validate->fails()) {
@@ -174,10 +171,7 @@ class TaskController extends Controller
 
         if (!empty($params_array)) {
             $validate = Validator::make($params_array, [
-                'id' => 'required',
-                'subject_id' => 'required',
                 'title' => 'required',
-                'description' => 'required',
             ]);
 
             if ($validate->fails()) {
