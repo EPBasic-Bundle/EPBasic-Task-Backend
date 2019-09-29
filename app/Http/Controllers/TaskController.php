@@ -66,7 +66,7 @@ class TaskController extends Controller
         }
     }
 
-    // Tareas por ID
+    // Tarea por ID
     public function detail(Request $request, $id, $json = true)
     {
         $user = app('App\Http\Controllers\UserController')
@@ -78,6 +78,7 @@ class TaskController extends Controller
 
         if ($subject) {
             $task->load('pages');
+            $task->load('book');
 
             foreach($task['pages'] as $page) {
                 $page->load('exercises');
@@ -108,6 +109,7 @@ class TaskController extends Controller
 
             $validate = Validator::make($params_array, [
                 'subject_id' => 'required',
+                'unity_id' => 'required',
                 'title' => 'required',
                 //'delivery_date' => 'required',
             ]);
@@ -129,20 +131,22 @@ class TaskController extends Controller
                 $task->done = false;
                 $task->save();
 
-                foreach ($params->pages as $Page) {
-                    $page = new Page();
+                if (isset($params->pages)) {
+                    foreach ($params->pages as $Page) {
+                        $page = new Page();
 
-                    $page->task_id = $task->id;
-                    $page->number = $Page->number;
-                    $page->save();
+                        $page->task_id = $task->id;
+                        $page->number = $Page->number;
+                        $page->save();
 
-                    foreach ($Page->exercises as $Exercise) {
-                        $exercise = new Exercise();
+                        foreach ($Page->exercises as $Exercise) {
+                            $exercise = new Exercise();
 
-                        $exercise->page_id = $page->id;
-                        $exercise->number = $Exercise->number;
-                        $exercise->done = false;
-                        $exercise->save();
+                            $exercise->page_id = $page->id;
+                            $exercise->number = $Exercise->number;
+                            $exercise->done = false;
+                            $exercise->save();
+                        }
                     }
                 }
 
