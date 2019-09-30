@@ -42,4 +42,5 @@ Route::post('task', 'TaskController@store');
 Route::put('task/{id}', 'TaskController@update');
 Route::delete('task/{id}', 'TaskController@destroy');
 
-Route::post('exercise/done/{id}', 'ExerciseController@markAsDone');
+Route::post('exercise/done/{exercise_id}', 'ExerciseController@markAsDone');
+Route::post('exercises/done/{task_id}', 'ExerciseController@markAsDoneAll');
