@@ -229,8 +229,6 @@ class TaskController extends Controller
             $subject = Subject::where('user_id', $user->sub)->where('id', $task->subject_id)->first();
 
             if ($subject && is_object($subject)) {
-                $task->delete();
-
                 $task->load('pages');
 
                 foreach ($task->pages as $page) {
@@ -239,6 +237,8 @@ class TaskController extends Controller
                     }
                     $page->delete();
                 }
+
+                $task->delete();
 
                 $data = array(
                     'status' => 'success',

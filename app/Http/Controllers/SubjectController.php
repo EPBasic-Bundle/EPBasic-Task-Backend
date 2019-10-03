@@ -1,8 +1,8 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\User;
 use App\Subject;
+use App\Task;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
@@ -10,7 +10,8 @@ use Validator;
 
 class SubjectController extends Controller
 {
-    public function __construct() {
+    public function __construct()
+    {
         $this->middleware('api.auth');
     }
 
@@ -18,7 +19,7 @@ class SubjectController extends Controller
     public function index(Request $request)
     {
         $user = app('App\Http\Controllers\UserController')
-                ->getAuth($request->header('Authorization'));
+            ->getAuth($request->header('Authorization'));
 
         $subjects = Subject::where('user_id', $user->sub)->get();
 
@@ -33,7 +34,7 @@ class SubjectController extends Controller
     public function detail(Request $request, $id, $json = true)
     {
         $user = app('App\Http\Controllers\UserController')
-                ->getAuth($request->header('Authorization'));
+            ->getAuth($request->header('Authorization'));
 
         $subject = Subject::where('id', $id)->where('user_id', $user->sub)->first();
 
@@ -45,6 +46,27 @@ class SubjectController extends Controller
             ]);
         } else {
             return $subject;
+        }
+    }
+
+    // Tareas
+    public function indexWithAll(Request $request)
+    {
+        $user = app('App\Http\Controllers\UserController')
+            ->getAuth($request->header('Authorization'));
+
+        $subjects = Subject::where('user_id', $user->sub)->get();
+
+        if ($subjects && is_object($subjects)) {
+            foreach ($subjects as $subject) {
+                $subject->tasks = Task::where('subject_id', $subject->id)->where('done', 0)->get();
+            }
+
+            return response()->json([
+                'code' => 200,
+                'status' => 'success',
+                'subjects' => $subjects,
+            ]);
         }
     }
 
@@ -83,7 +105,7 @@ class SubjectController extends Controller
                 $data = array(
                     'status' => 'success',
                     'code' => 200,
-                    'subject' => $this->detail($request, $subject->id, false)
+                    'subject' => $this->detail($request, $subject->id, false),
                 );
             }
         } else {
@@ -127,7 +149,7 @@ class SubjectController extends Controller
                     $data = array(
                         'status' => 'success',
                         'code' => 200,
-                        'subject' => $this->detail($request, $subject->id, false)
+                        'subject' => $this->detail($request, $subject->id, false),
                     );
                 } else {
                     $data = array(
@@ -150,7 +172,7 @@ class SubjectController extends Controller
     public function destroy(Request $request, $id)
     {
         $user = app('App\Http\Controllers\UserController')
-                ->getAuth($request->header('Authorization'));
+            ->getAuth($request->header('Authorization'));
 
         $subject = Subject::where('user_id', $user->sub)->where('id', $id)->first();
 

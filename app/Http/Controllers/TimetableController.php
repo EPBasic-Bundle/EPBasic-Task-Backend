@@ -114,6 +114,40 @@ class TimetableController extends Controller
         return response()->json($data, $data['code']);
     }
 
+    //Eliminar timetable
+    public function destroy(Request $request)
+    {
+        $user = app('App\Http\Controllers\UserController')
+                ->getAuth($request->header('Authorization'));
+
+        $timetable = Timetable::where('user_id', $user->sub)->first();
+
+        if ($timetable && is_object($timetable)) {
+            $timetable->load('subjects')->load('hours');
+
+            foreach ($timetable['subjects'] as $subject) {
+                $subject->delete();
+            }
+
+            foreach ($timetable['hours']  as $hour) {
+                $hour->delete();
+            }
+
+            $timetable->delete();
+
+            $data = array(
+                'status' => 'success',
+                'code' => 200,
+            );
+        } else {
+            $data = [
+                'code' => 200,
+                'status' => 'error',
+            ];
+        }
+        return response()->json($data, $data['code']);
+    }
+
     public function DeleteTimetable($timetable) {
         $timetableSubjects = TimetableSubject::where('timetable_id', $timetable->id)->get();
 
@@ -129,4 +163,5 @@ class TimetableController extends Controller
 
         $timetable->delete();
     }
+
 }
