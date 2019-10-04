@@ -49,7 +49,7 @@ class SubjectController extends Controller
         }
     }
 
-    // Tareas
+    // Asignatura con tareas
     public function indexWithAll(Request $request)
     {
         $user = app('App\Http\Controllers\UserController')
@@ -62,12 +62,19 @@ class SubjectController extends Controller
                 $subject->tasks = Task::where('subject_id', $subject->id)->where('done', 0)->get();
             }
 
-            return response()->json([
+            $data = array(
                 'code' => 200,
                 'status' => 'success',
                 'subjects' => $subjects,
-            ]);
+            );
+        } else {
+            $data = array(
+                'code' => 200,
+                'status' => 'error',
+            );
         }
+
+        return response()->json($data, $data['code']);
     }
 
     // Añadir asignatura

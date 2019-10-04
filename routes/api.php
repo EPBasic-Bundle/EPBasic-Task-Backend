@@ -18,8 +18,8 @@ Route::get('timetable', 'TimetableController@index');
 Route::post('timetable', 'TimetableController@store');
 Route::delete('timetable', 'TimetableController@destroy');
 
+Route::get('subjects/all', 'SubjectController@indexWithAll');
 Route::get('subjects', 'SubjectController@index');
-Route::get('subjects/all/', 'SubjectController@indexWithAll');
 Route::get('subject/{id}', 'SubjectController@detail');
 Route::post('subject', 'SubjectController@store');
 Route::put('subject/{id}', 'SubjectController@update');
