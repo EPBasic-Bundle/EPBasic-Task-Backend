@@ -101,6 +101,9 @@ class BookController extends Controller
                     $book->subject_id = $params->subject_id;
                     $book->pages_quantity = $params->pages_quantity;
                     $book->image = $params->image;
+                    $book->pdf_name = $params->pdf_name;
+                    $book->last_seen_page = 1;
+
                     $book->save();
 
                     $data = array(
@@ -158,6 +161,7 @@ class BookController extends Controller
                         $book->subject_id = $params->subject_id;
                         $book->pages_quantity = $params->pages_quantity;
                         $book->image = $params->image;
+                        $book->pdf_name = $params->pdf_name;
 
                         $book->update();
 
@@ -239,11 +243,41 @@ class BookController extends Controller
             $pdf_name = time() . $pdf->getClientOriginalName();
 
             Storage::disk('books')->put($pdf_name, File::get($pdf));
-
+            $isset = Storage::disk('books')->exists($pdf_name);
             $data = array(
                 'code' => 200,
                 'status' => 'success',
                 'pdf' => $pdf_name,
+                'iss' => $isset
+            );
+        }
+
+        return response()->json($data, $data['code']);
+    }
+
+    // Cambiar última hoja
+    public function lastSeenPage(Request $request, $book_id, $page_number)
+    {
+        $user = app('App\Http\Controllers\UserController')
+            ->getAuth($request->header('Authorization'));
+
+        $book = Book::find($book_id);
+
+        $subject = Subject::where('user_id', $user->sub)->where('id', $book->subject_id)->first();
+
+        if ($subject) {
+            $book->last_seen_page = $page_number;
+            $book->update();
+
+            $data = array(
+                'status' => 'success',
+                'code' => 200,
+                'book' => $book
+            );
+        } else {
+            $data = array(
+                'status' => 'error',
+                'code' => 200,
             );
         }
 

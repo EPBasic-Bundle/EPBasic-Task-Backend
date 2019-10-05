@@ -31,6 +31,8 @@ Route::get('book/{id}', 'BookController@detail');
 Route::post('book', 'BookController@store');
 Route::put('book/{id}', 'BookController@update');
 Route::delete('book/{id}', 'BookController@destroy');
+Route::post('pdf/upload/{book_id}', 'BookController@pdfUpload');
+Route::get('pdf/last-seen-page/{book_id}/{page_number}', 'BookController@lastSeenPage');
 
 Route::get('units/{subject_id}', 'UnityController@index');
 Route::get('unity/{id}', 'UnityController@detail');
