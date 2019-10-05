@@ -1,21 +1,26 @@
 <?php
-
 namespace App\Http\Controllers;
-
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Response;
-use Validator;
 
 use App\Book;
 use App\Subject;
+use File;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Response;
+use Storage;
+use Validator;
 
 class BookController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('api.auth', ['except' => ['getBookPDF']]);
+    }
+
     // Libros por asignatura
     public function index(Request $request, $subject_id)
     {
         $user = app('App\Http\Controllers\UserController')
-                ->getAuth($request->header('Authorization'));
+            ->getAuth($request->header('Authorization'));
 
         $subject = Subject::where('user_id', $user->sub)->where('id', $subject_id)->first();
 
@@ -27,6 +32,11 @@ class BookController extends Controller
                 'status' => 'success',
                 'books' => $books,
             ]);
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'code' => 200,
+            ]);
         }
     }
 
@@ -34,9 +44,9 @@ class BookController extends Controller
     public function detail(Request $request, $id, $json = true)
     {
         $user = app('App\Http\Controllers\UserController')
-                ->getAuth($request->header('Authorization'));
+            ->getAuth($request->header('Authorization'));
 
-        $book = Book::where('id', $id)->first();
+        $book = Book::find($id);
 
         $subject = Subject::where('user_id', $user->sub)->where('id', $book->subject_id)->first();
 
@@ -50,6 +60,11 @@ class BookController extends Controller
             } else {
                 return $book;
             }
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'code' => 200,
+            ]);
         }
     }
 
@@ -91,7 +106,7 @@ class BookController extends Controller
                     $data = array(
                         'status' => 'success',
                         'code' => 200,
-                        'book' => $this->detail($request, $book->id, false)
+                        'book' => $this->detail($request, $book->id, false),
                     );
                 } else {
                     $data = array(
@@ -121,7 +136,7 @@ class BookController extends Controller
             $validate = Validator::make($params_array, [
                 'name' => 'required',
                 'subject_id' => 'required',
-                'pages_quantity' => 'required'
+                'pages_quantity' => 'required',
             ]);
 
             if ($validate->fails()) {
@@ -149,7 +164,7 @@ class BookController extends Controller
                         $data = array(
                             'status' => 'success',
                             'code' => 200,
-                            'book' => $this->detail($request, $book->id, false)
+                            'book' => $this->detail($request, $book->id, false),
                         );
                     } else {
                         $data = array(
@@ -159,16 +174,21 @@ class BookController extends Controller
                     }
                 }
             }
-
-            return response()->json($data, $data['code']);
+        } else {
+            $data = array(
+                'status' => 'error',
+                'code' => 200,
+            );
         }
+
+        return response()->json($data, $data['code']);
     }
 
     //Eliminar libro
     public function destroy(Request $request, $id)
     {
         $user = app('App\Http\Controllers\UserController')
-                ->getAuth($request->header('Authorization'));
+            ->getAuth($request->header('Authorization'));
 
         $book = Book::find($id);
 
@@ -194,6 +214,49 @@ class BookController extends Controller
                 'status' => 'error',
             ];
         }
+
         return response()->json($data, $data['code']);
+    }
+
+    //Subir pdf
+    public function pdfUpload(Request $request, $book_id)
+    {
+        $pdf = $request->file('file');
+
+        $validate = Validator::make($request->all(), [
+            'file' => 'required|image|mimes:jpg,JPG,jpeg,png,gif',
+        ]);
+
+        $user = app('App\Http\Controllers\UserController')
+            ->getAuth($request->header('Authorization'));
+
+        if (!$pdf || $validate->fails()) {
+            $data = array(
+                'code' => 200,
+                'status' => 'error',
+            );
+        } else {
+            $pdf_name = time() . $pdf->getClientOriginalName();
+
+            Storage::disk('books')->put($pdf_name, File::get($pdf));
+
+            $data = array(
+                'code' => 200,
+                'status' => 'success',
+                'pdf' => $pdf_name,
+            );
+        }
+
+        return response()->json($data, $data['code']);
+    }
+
+    //PDF libro
+    public function getBookPDF($filename = null)
+    {
+        $isset = Storage::disk('books')->exists($filename);
+
+        $file = Storage::disk('books')->get($filename);
+
+        return Response::make($file, 200);
     }
 }

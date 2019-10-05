@@ -26,7 +26,8 @@ Route::put('subject/{id}', 'SubjectController@update');
 Route::delete('subject/{id}', 'SubjectController@destroy');
 
 Route::get('books/{subject_id}', 'BookController@index');
-Route::get('books/{id}', 'BookController@detail');
+Route::get('book/getPDF/{filename}', 'BookController@getBookPDF');
+Route::get('book/{id}', 'BookController@detail');
 Route::post('book', 'BookController@store');
 Route::put('book/{id}', 'BookController@update');
 Route::delete('book/{id}', 'BookController@destroy');
@@ -37,13 +38,12 @@ Route::post('unity', 'UnityController@store');
 Route::put('unity/{id}', 'UnityController@update');
 Route::delete('unity/{id}', 'UnityController@destroy');
 
-Route::get('tasks/todo/', 'TaskController@indexToDo');
+Route::get('tasks/todo/{subject_id}', 'TaskController@indexToDo');
 Route::get('tasks/{unity_id}', 'TaskController@index');
 Route::get('task/{id}', 'TaskController@detail');
 Route::post('task', 'TaskController@store');
 Route::put('task/{id}', 'TaskController@update');
 Route::delete('task/{id}', 'TaskController@destroy');
-
 
 Route::post('exercise/done/{exercise_id}', 'ExerciseController@markAsDone');
 Route::post('exercises/done/{task_id}', 'ExerciseController@markAsDoneAll');
