@@ -169,6 +169,12 @@ class UnityController extends Controller
             $subject = Subject::where('user_id', $user->sub)->where('id', $unity->subject_id)->first();
 
             if ($subject && is_object($subject)) {
+                $unity->load('tasks');
+
+                foreach ($unity->tasks as $task) {
+                    $task->delete();
+                }
+
                 $unity->delete();
 
                 $data = array(
