@@ -17,7 +17,7 @@ class UserController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('api.auth', ['except' => ['register', 'login']]);
+        $this->middleware('api.auth', ['except' => ['register', 'login', 'unblockUser']]);
     }
 
     /**********************************************************************************************/
@@ -51,10 +51,11 @@ class UserController extends Controller
         return response()->json($data, $data['code']);
     }
 
+
     /**********************************************************************************************/
                                             /* CRUD */
     /**********************************************************************************************/
-
+   
     //Registrar
     public function register(Request $request)
     {
@@ -152,6 +153,32 @@ class UserController extends Controller
 
         return response()->json($data, $data['code']);
     }
+
+    public function unblockUser(Request $request, $user_id, $pinCode) {
+        $user = User::where('id', $user_id)->where('pinCode', $pinCode)->first();
+
+        $jwtAuth = new JwtAuth();
+        
+        $identity = $jwtAuth->signup($user->email, $user->password);
+        $token = $jwtAuth->signup($user->email, $user->password, true);
+
+        if (!is_null($identity) && !is_null($token)) {
+            $data = array(
+                'status' => 'success',
+                'code' => 200,
+                'identity' => $identity,
+                'token' =>$token
+            );
+        } else {
+            $data = array(
+                'status' => 'error',
+                'code' => 200
+            );
+        }
+
+        return response()->json($data, $data['code']);
+    }
+
 
     //Actualizar usuario
     public function update(Request $request)
