@@ -11,4 +11,8 @@ class Unity extends Model
     public function tasks(){
         return $this->hasMany('App\Task', 'unity_id');
     }
+
+    public function exams(){
+        return $this->hasMany('App\Exam', 'unity_id');
+    }
 }

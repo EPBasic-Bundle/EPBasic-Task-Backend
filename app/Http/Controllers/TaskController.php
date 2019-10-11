@@ -121,40 +121,50 @@ class TaskController extends Controller
                     'errors' => $validate->errors(),
                 );
             } else {
-                $task = new Task();
+                $subject = Subject::where('user_id', $user->sub)->where('id', $params->subject_id)->first();
 
-                $task->subject_id = $params->subject_id;
-                $task->book_id = $params->book_id;
-                $task->unity_id = $params->unity_id;
-                $task->title = $params->title;
-                $task->description = $params->description;
-                $task->done = false;
-                $task->save();
+                if ($subject && is_object($subject)) {
 
-                if (isset($params->pages)) {
-                    foreach ($params->pages as $Page) {
-                        $page = new Page();
+                    $task = new Task();
 
-                        $page->task_id = $task->id;
-                        $page->number = $Page->number;
-                        $page->save();
+                    $task->subject_id = $params->subject_id;
+                    $task->book_id = $params->book_id;
+                    $task->unity_id = $params->unity_id;
+                    $task->title = $params->title;
+                    $task->description = $params->description;
+                    $task->done = false;
+                    $task->save();
 
-                        foreach ($Page->exercises as $Exercise) {
-                            $exercise = new Exercise();
+                    if (isset($params->pages)) {
+                        foreach ($params->pages as $Page) {
+                            $page = new Page();
 
-                            $exercise->page_id = $page->id;
-                            $exercise->number = $Exercise->number;
-                            $exercise->done = false;
-                            $exercise->save();
+                            $page->task_id = $task->id;
+                            $page->number = $Page->number;
+                            $page->save();
+
+                            foreach ($Page->exercises as $Exercise) {
+                                $exercise = new Exercise();
+
+                                $exercise->page_id = $page->id;
+                                $exercise->number = $Exercise->number;
+                                $exercise->done = false;
+                                $exercise->save();
+                            }
                         }
                     }
-                }
 
-                $data = array(
-                    'status' => 'success',
-                    'code' => 200,
-                    'task' => $this->detail($request, $task->id, false)
-                );
+                    $data = array(
+                        'status' => 'success',
+                        'code' => 200,
+                        'task' => $this->detail($request, $task->id, false)
+                    );
+                } else {
+                    $data = array(
+                        'status' => 'error',
+                        'code' => 200,
+                    );
+                }
             }
         } else {
             $data = array(

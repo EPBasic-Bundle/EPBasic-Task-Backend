@@ -20,7 +20,7 @@ class UnityController extends Controller
         $subject = Subject::where('user_id', $user->sub)->where('id', $subject_id)->first();
 
         if ($subject) {
-            $units = Unity::where('subject_id', $subject_id)->get();
+            $units = Unity::where('subject_id', $subject_id)->orderBy('number', 'desc')->get();
 
             return response()->json([
                 'code' => 200,
@@ -170,9 +170,14 @@ class UnityController extends Controller
 
             if ($subject && is_object($subject)) {
                 $unity->load('tasks');
+                $unity->load('exams');
 
                 foreach ($unity->tasks as $task) {
                     $task->delete();
+                }
+
+                foreach ($unity->exams as $exam) {
+                    $exam->delete();
                 }
 
                 $unity->delete();

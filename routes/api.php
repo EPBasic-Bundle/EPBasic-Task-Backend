@@ -48,5 +48,11 @@ Route::post('task', 'TaskController@store');
 Route::put('task/{id}', 'TaskController@update');
 Route::delete('task/{id}', 'TaskController@destroy');
 
+Route::get('exams/{unity_id}', 'ExamController@index');
+Route::get('exam/{id}', 'ExamController@detail');
+Route::post('exam', 'ExamController@store');
+Route::put('exam/{id}', 'ExamController@update');
+Route::delete('exam/{id}', 'ExamController@destroy');
+
 Route::post('exercise/done/{exercise_id}', 'ExerciseController@markAsDone');
 Route::post('exercises/done/{task_id}', 'ExerciseController@markAsDoneAll');
