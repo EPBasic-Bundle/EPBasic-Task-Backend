@@ -3,6 +3,9 @@ namespace App\Http\Controllers;
 
 use App\Book;
 use App\Subject;
+use App\Unity;
+use App\SavedPage;
+
 use File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
@@ -255,7 +258,7 @@ class BookController extends Controller
         return response()->json($data, $data['code']);
     }
 
-    // Cambiar última hoja
+    // Cambiar última página
     public function lastSeenPage(Request $request, $book_id, $page_number)
     {
         $user = app('App\Http\Controllers\UserController')
@@ -273,6 +276,69 @@ class BookController extends Controller
                 'status' => 'success',
                 'code' => 200,
                 'book' => $book
+            );
+        } else {
+            $data = array(
+                'status' => 'error',
+                'code' => 200,
+            );
+        }
+
+        return response()->json($data, $data['code']);
+    }
+
+    // Guardar página
+    public function savePage(Request $request)
+    {
+        $json = $request->input('json', null);
+        $params = json_decode($json);
+
+        $user = app('App\Http\Controllers\UserController')
+            ->getAuth($request->header('Authorization'));
+
+        $unity = Unity::find($params->unity_id);
+
+        $subject = Subject::where('user_id', $user->sub)->where('id', $unity->subject_id)->first();
+
+        if ($subject) {
+            $savedPage = new SavedPage();
+            $savedPage->unity_id = $params->unity_id;
+            $savedPage->page = $params->page;
+
+            $savedPage->save();
+
+            $data = array(
+                'status' => 'success',
+                'code' => 200,
+                'savedPage' => $savedPage
+            );
+        } else {
+            $data = array(
+                'status' => 'error',
+                'code' => 200,
+            );
+        }
+
+        return response()->json($data, $data['code']);
+    }
+
+    // Páginas guardas
+    public function savedPages(Request $request, $unity_id)
+    {
+        $user = app('App\Http\Controllers\UserController')
+            ->getAuth($request->header('Authorization'));
+
+        $unity = Unity::find($unity_id);
+
+        $subject = Subject::where('user_id', $user->sub)->where('id', $unity->subject_id)->first();
+
+        if ($subject) {
+            $savedPages = SavedPage::where('unity_id', $unity_id)->orderBy('page', 'asc')->get();
+
+            $data = array(
+                'status' => 'success',
+                'code' => 200,
+                'savedPages' => $savedPages
             );
         } else {
             $data = array(
