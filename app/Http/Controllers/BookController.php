@@ -288,7 +288,7 @@ class BookController extends Controller
     }
 
     // Guardar página
-    public function savePage(Request $request)
+    public function storePage(Request $request)
     {
         $json = $request->input('json', null);
         $params = json_decode($json);
@@ -304,8 +304,44 @@ class BookController extends Controller
             $savedPage = new SavedPage();
             $savedPage->unity_id = $params->unity_id;
             $savedPage->page = $params->page;
+            $savedPage->note = $params->note;
 
             $savedPage->save();
+
+            $data = array(
+                'status' => 'success',
+                'code' => 200,
+                'savedPage' => $savedPage
+            );
+        } else {
+            $data = array(
+                'status' => 'error',
+                'code' => 200,
+            );
+        }
+
+        return response()->json($data, $data['code']);
+    }
+
+    // Guardar página
+    public function updatePage(Request $request, $id)
+    {
+        $json = $request->input('json', null);
+        $params = json_decode($json);
+
+        $user = app('App\Http\Controllers\UserController')
+            ->getAuth($request->header('Authorization'));
+
+        $savedPage = SavedPage::find($id);
+
+        $unity = Unity::find($savedPage->unity_id);
+
+        $subject = Subject::where('user_id', $user->sub)->where('id', $unity->subject_id)->first();
+
+        if ($subject) {
+            $savedPage->note = $params->note;
+
+            $savedPage->update();
 
             $data = array(
                 'status' => 'success',
