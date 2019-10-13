@@ -33,6 +33,25 @@ class ExamController extends Controller
         }
     }
 
+    // Examen por asignatura
+    public function indexToDo(Request $request, $subject_id)
+    {
+        $user = app('App\Http\Controllers\UserController')
+                ->getAuth($request->header('Authorization'));
+
+        $subject = Subject::where('user_id', $user->sub)->where('id', $subject_id)->first();
+
+        if ($subject) {
+            $exams = Exam::where('subject_id', $subject->id)->where('mark', null)->get();
+
+            return response()->json([
+                'code' => 200,
+                'status' => 'success',
+                'exams' => $exams,
+            ]);
+        }
+    }
+
     // Examen por ID
     public function detail(Request $request, $id, $json = true)
     {

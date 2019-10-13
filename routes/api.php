@@ -52,6 +52,7 @@ Route::post('task', 'TaskController@store');
 Route::put('task/{id}', 'TaskController@update');
 Route::delete('task/{id}', 'TaskController@destroy');
 
+Route::get('exams/todo/{subject_id}', 'ExamController@indexToDo');
 Route::get('exams/{unity_id}', 'ExamController@index');
 Route::get('exam/{id}', 'ExamController@detail');
 Route::post('exam', 'ExamController@store');

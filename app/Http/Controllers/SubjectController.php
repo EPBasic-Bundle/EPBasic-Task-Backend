@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Subject;
 use App\Task;
+use App\Exam;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
@@ -60,6 +61,7 @@ class SubjectController extends Controller
         if ($subjects && is_object($subjects)) {
             foreach ($subjects as $subject) {
                 $subject->tasks = Task::where('subject_id', $subject->id)->where('done', 0)->get();
+                $subject->exams = Exam::where('subject_id', $subject->id)->where('mark', null)->get();
             }
 
             $data = array(
