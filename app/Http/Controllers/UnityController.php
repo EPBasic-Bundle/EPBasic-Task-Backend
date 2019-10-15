@@ -36,7 +36,7 @@ class UnityController extends Controller
         $user = app('App\Http\Controllers\UserController')
                 ->getAuth($request->header('Authorization'));
 
-        $unity = Unity::where('id', $id)->first();
+        $unity = Unity::find($id);
 
         $subject = Subject::where('user_id', $user->sub)->where('id', $unity->subject_id)->first();
 

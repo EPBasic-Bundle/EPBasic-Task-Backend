@@ -1,9 +1,10 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Exam;
 use App\Subject;
 use App\Task;
-use App\Exam;
+use App\Unity;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
@@ -77,6 +78,33 @@ class SubjectController extends Controller
         }
 
         return response()->json($data, $data['code']);
+    }
+
+    // Seleccionar unidad actual
+    public function setCurrentUnity(Request $request, $id)
+    {
+        $user = app('App\Http\Controllers\UserController')
+            ->getAuth($request->header('Authorization'));
+
+        $unity = Unity::find($id);
+
+        $subject = Subject::where('user_id', $user->sub)->where('id', $unity->subject_id)->first();
+
+        if ($subject) {
+            $subject->current_unity = $id;
+            $subject->save();
+
+            return response()->json([
+                'code' => 200,
+                'status' => 'success',
+                'subject' => $subject,
+            ]);
+        } else {
+            $data = array(
+                'status' => 'error',
+                'code' => 200,
+            );
+        }
     }
 
     // Añadir asignatura

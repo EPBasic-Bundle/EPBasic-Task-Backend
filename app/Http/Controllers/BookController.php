@@ -305,6 +305,7 @@ class BookController extends Controller
             $savedPage->unity_id = $params->unity_id;
             $savedPage->page = $params->page;
             $savedPage->note = $params->note;
+            $savedPage->type = $params->type;
 
             $savedPage->save();
 
@@ -323,7 +324,7 @@ class BookController extends Controller
         return response()->json($data, $data['code']);
     }
 
-    // Guardar página
+    // Actualizar página
     public function updatePage(Request $request, $id)
     {
         $json = $request->input('json', null);
@@ -340,6 +341,7 @@ class BookController extends Controller
 
         if ($subject) {
             $savedPage->note = $params->note;
+            $savedPage->type = $params->type;
 
             $savedPage->update();
 
@@ -347,6 +349,38 @@ class BookController extends Controller
                 'status' => 'success',
                 'code' => 200,
                 'savedPage' => $savedPage
+            );
+        } else {
+            $data = array(
+                'status' => 'error',
+                'code' => 200,
+            );
+        }
+
+        return response()->json($data, $data['code']);
+    }
+
+    // Eliminar página
+    public function destroyPage(Request $request, $id)
+    {
+        $json = $request->input('json', null);
+        $params = json_decode($json);
+
+        $user = app('App\Http\Controllers\UserController')
+            ->getAuth($request->header('Authorization'));
+
+        $savedPage = SavedPage::find($id);
+
+        $unity = Unity::find($savedPage->unity_id);
+
+        $subject = Subject::where('user_id', $user->sub)->where('id', $unity->subject_id)->first();
+
+        if ($subject) {
+            $savedPage->delete();
+
+            $data = array(
+                'status' => 'success',
+                'code' => 200,
             );
         } else {
             $data = array(

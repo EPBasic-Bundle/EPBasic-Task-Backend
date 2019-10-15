@@ -20,6 +20,7 @@ Route::post('timetable', 'TimetableController@store');
 Route::delete('timetable', 'TimetableController@destroy');
 
 Route::get('subjects/all', 'SubjectController@indexWithAll');
+Route::get('subject/set-current-unity/{id}', 'SubjectController@setCurrentUnity');
 Route::get('subjects', 'SubjectController@index');
 Route::get('subject/{id}', 'SubjectController@detail');
 Route::post('subject', 'SubjectController@store');
@@ -38,6 +39,7 @@ Route::get('pdf/last-seen-page/{book_id}/{page_number}', 'BookController@lastSee
 Route::get('pdf/saved-pages/{unity_id}', 'BookController@savedPages');
 Route::post('pdf/savedPage', 'BookController@storePage');
 Route::put('pdf/savedPage/{id}', 'BookController@updatePage');
+Route::delete('pdf/savedPage/{id}', 'BookController@destroyPage');
 
 Route::get('units/{subject_id}', 'UnityController@index');
 Route::get('unity/{id}', 'UnityController@detail');
@@ -59,5 +61,5 @@ Route::post('exam', 'ExamController@store');
 Route::put('exam/{id}', 'ExamController@update');
 Route::delete('exam/{id}', 'ExamController@destroy');
 
-Route::post('exercise/done/{exercise_id}', 'ExerciseController@markAsDone');
-Route::post('exercises/done/{task_id}', 'ExerciseController@markAsDoneAll');
+Route::get('exercise/done/{exercise_id}', 'ExerciseController@markAsDone');
+Route::get('exercises/done/{task_id}', 'ExerciseController@markAsDoneAll');
