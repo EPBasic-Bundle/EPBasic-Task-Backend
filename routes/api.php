@@ -63,3 +63,8 @@ Route::delete('exam/{id}', 'ExamController@destroy');
 
 Route::get('exercise/done/{exercise_id}', 'ExerciseController@markAsDone');
 Route::get('exercises/done/{task_id}', 'ExerciseController@markAsDoneAll');
+
+Route::get('events', 'EventController@index');
+Route::post('event', 'EventController@store');
+Route::put('event/{id}', 'EventController@update');
+Route::delete('event/{id}', 'EventController@destroy');

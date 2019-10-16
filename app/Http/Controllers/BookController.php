@@ -231,7 +231,7 @@ class BookController extends Controller
         $pdf = $request->file('file');
 
         $validate = Validator::make($request->all(), [
-            'file' => 'required|image|mimes:jpg,JPG,jpeg,png,gif',
+            'file' => 'required|mimes:pdf',
         ]);
 
         $user = app('App\Http\Controllers\UserController')
