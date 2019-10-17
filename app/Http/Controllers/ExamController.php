@@ -109,6 +109,8 @@ class ExamController extends Controller
                     $exam->unity_id = $params->unity_id;
                     $exam->title = $params->title;
                     $exam->mark = $params->mark;
+                    $exam->exam_date = $params->exam_date;
+
                     $exam->save();
 
                     $data = array(
@@ -162,6 +164,7 @@ class ExamController extends Controller
                     if ($subject && is_object($subject)) {
                         $exam->title = $params->title;
                         $exam->mark = $params->mark;
+                        $exam->exam_date = $params->exam_date;
 
                         $exam->update();
 

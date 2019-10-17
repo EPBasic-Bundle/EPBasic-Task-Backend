@@ -206,6 +206,7 @@ class TaskController extends Controller
                         $task->book_id = $params->book_id;
                         $task->title = $params->title;
                         $task->description = $params->description;
+                        $task->delivery_date = $params->delivery_date;
 
                         $task->update();
 
