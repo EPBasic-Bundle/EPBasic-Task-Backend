@@ -132,6 +132,7 @@ class TaskController extends Controller
                     $task->unity_id = $params->unity_id;
                     $task->title = $params->title;
                     $task->description = $params->description;
+                    $task->delivery_date = $params->delivery_date;
                     $task->done = false;
                     $task->save();
 
