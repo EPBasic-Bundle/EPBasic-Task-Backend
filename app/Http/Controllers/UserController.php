@@ -55,7 +55,7 @@ class UserController extends Controller
     /**********************************************************************************************/
                                             /* CRUD */
     /**********************************************************************************************/
-   
+
     //Registrar
     public function register(Request $request)
     {
@@ -158,7 +158,7 @@ class UserController extends Controller
         $user = User::where('id', $user_id)->where('pinCode', $pinCode)->first();
 
         $jwtAuth = new JwtAuth();
-        
+
         $identity = $jwtAuth->signup($user->email, $user->password);
         $token = $jwtAuth->signup($user->email, $user->password, true);
 
@@ -179,6 +179,51 @@ class UserController extends Controller
         return response()->json($data, $data['code']);
     }
 
+    public function changePinCode(Request $request) {
+        $user = $this->getAuth($request->header('Authorization'));
+
+        if (!is_null($user)) {
+            $pinCode = rand(100000, 999999);
+
+            $user = User::find($user->sub);
+            $user->pinCode = $pinCode;
+            $user->update();
+
+            $data = array(
+                'status' => 'success',
+                'code' => 200,
+                'pinCode' => $pinCode
+            );
+        } else {
+            $data = array(
+                'status' => 'error',
+                'code' => 200
+            );
+        }
+
+        return response()->json($data, $data['code']);
+    }
+
+    public function getPinCode(Request $request) {
+        $user = $this->getAuth($request->header('Authorization'));
+
+        if (!is_null($user)) {
+            $user = User::find($user->sub);
+
+            $data = array(
+                'status' => 'success',
+                'code' => 200,
+                'pinCode' => $user->pinCode
+            );
+        } else {
+            $data = array(
+                'status' => 'error',
+                'code' => 200
+            );
+        }
+
+        return response()->json($data, $data['code']);
+    }
 
     //Actualizar usuario
     public function update(Request $request)

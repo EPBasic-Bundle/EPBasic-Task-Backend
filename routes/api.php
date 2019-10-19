@@ -13,7 +13,10 @@ Route::group(['middleware' => 'cors', 'prefix' => 'api'], function(){});
 Route::post('register', 'UserController@register');
 Route::post('login', 'UserController@login');
 Route::put('user/update', 'UserController@update');
+
 Route::get('user/pinCode/{user_id}/{pinCode}', 'UserController@unblockUser');
+Route::get('user/pinCode', 'UserController@getPinCode');
+Route::get('user/change-pinCode', 'UserController@changePinCode');
 
 Route::get('timetable', 'TimetableController@index');
 Route::post('timetable', 'TimetableController@store');
