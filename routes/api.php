@@ -64,8 +64,8 @@ Route::post('exam', 'ExamController@store');
 Route::put('exam/{id}', 'ExamController@update');
 Route::delete('exam/{id}', 'ExamController@destroy');
 
-Route::get('exercise/done/{exercise_id}', 'ExerciseController@markAsDone');
-Route::get('exercises/done/{task_id}', 'ExerciseController@markAsDoneAll');
+Route::get('exercise/done/{exercise_id}', 'ExerciseController@changeStatus');
+Route::get('exercises/done/{task_id}', 'ExerciseController@changeStatusAll');
 
 Route::get('events', 'EventController@index');
 Route::post('event', 'EventController@store');

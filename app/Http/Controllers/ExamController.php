@@ -42,7 +42,7 @@ class ExamController extends Controller
         $subject = Subject::where('user_id', $user->sub)->where('id', $subject_id)->first();
 
         if ($subject) {
-            $exams = Exam::where('subject_id', $subject->id)->where('mark', null)->get();
+            $exams = Exam::where('subject_id', $subject->id)->where('done', false)->get();
 
             return response()->json([
                 'code' => 200,
@@ -111,6 +111,10 @@ class ExamController extends Controller
                     $exam->mark = $params->mark;
                     $exam->exam_date = $params->exam_date;
 
+                    if ($params->mark !== null) {
+                        $exam->done = 1;
+                    }
+
                     $exam->save();
 
                     $data = array(
@@ -165,6 +169,10 @@ class ExamController extends Controller
                         $exam->title = $params->title;
                         $exam->mark = $params->mark;
                         $exam->exam_date = $params->exam_date;
+
+                        if ($params->mark !== null) {
+                            $exam->done = 1;
+                        }
 
                         $exam->update();
 

@@ -12,8 +12,8 @@ use Illuminate\Support\Facades\Response;
 
 class ExerciseController extends Controller
 {
-    // Marcar como hecho
-    public function markAsDone(Request $request, $id)
+    // Marcar como hecha
+    public function changeStatus(Request $request, $id)
     {
         $user = app('App\Http\Controllers\UserController')
                 ->getAuth($request->header('Authorization'));
@@ -25,7 +25,12 @@ class ExerciseController extends Controller
         $subject = Subject::where('user_id', $user->sub)->where('id', $task->subject_id)->first();
 
         if ($subject) {
-            $exercise->done = 1;
+            if ($exercise->done == 1) {
+                $exercise->done = 0;
+            } else {
+                $exercise->done = 1;
+            }
+
             $exercise->update();
         }
 
@@ -36,8 +41,8 @@ class ExerciseController extends Controller
         ]);
     }
 
-    // Marcar como hecho la tarea entera
-    public function markAsDoneAll(Request $request, $id)
+    // Marcar tarea entera como hecha
+    public function changeStatusAll(Request $request, $id)
     {
         $user = app('App\Http\Controllers\UserController')
                 ->getAuth($request->header('Authorization'));
@@ -47,21 +52,34 @@ class ExerciseController extends Controller
         $subject = Subject::where('user_id', $user->sub)->where('id', $task->subject_id)->first();
 
         if ($subject) {
-            $task->done = 1;
-            $task->update();
+            if ($task->done == 1) {
+                $task->done = 0;
 
-            $task->load('pages');
+                $task->load('pages');
 
-            if ($task['pages']) {
-                foreach($task['pages'] as $page) {
-                    $page->load('exercises');
+                if ($task['pages']) {
+                    foreach($task['pages'] as $page) {
+                        $page->load('exercises');
+                    }
+                }
+            } else {
+                $task->done = 1;
+            
+                $task->load('pages');
 
-                    foreach($page['exercises'] as $exercise) {
-                        $exercise->done = 1;
-                        $exercise->update();
+                if ($task['pages']) {
+                    foreach($task['pages'] as $page) {
+                        $page->load('exercises');
+
+                        foreach($page['exercises'] as $exercise) {
+                            $exercise->done = 1;
+                            $exercise->update();
+                        }
                     }
                 }
             }
+
+            $task->update();
         }
 
         return response()->json([
