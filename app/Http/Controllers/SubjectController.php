@@ -137,6 +137,11 @@ class SubjectController extends Controller
                 $subject->name = $params->name;
                 $subject->primary_color = $params->primary_color;
                 $subject->secondary_color = $params->secondary_color;
+                $subject->tasks_percentage = $params->tasks_percentage;
+                $subject->exams_percentage = $params->exams_percentage;
+                $subject->projects_percentage = $params->projects_percentage;
+                $subject->behaviour_percentage = $params->behaviour_percentage;
+
                 $subject->save();
 
                 $data = array(
@@ -180,6 +185,10 @@ class SubjectController extends Controller
                     $subject->name = $params->name;
                     $subject->primary_color = $params->primary_color;
                     $subject->secondary_color = $params->secondary_color;
+                    $subject->tasks_percentage = $params->tasks_percentage;
+                    $subject->exams_percentage = $params->exams_percentage;
+                    $subject->projects_percentage = $params->projects_percentage;
+                    $subject->behavior_percentage = $params->behavior_percentage;
 
                     $subject->update();
 
