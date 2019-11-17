@@ -253,6 +253,7 @@ class UserController extends Controller
             $user->name = $params->name;
             $user->surname = $params->surname;
             $user->email = $params->email;
+            $user->dark_mode = $params->dark_mode;
 
             $user->update();
 

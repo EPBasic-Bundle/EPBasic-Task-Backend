@@ -75,6 +75,33 @@ class ExamController extends Controller
         }
     }
 
+    // Marcar tarea como hecha
+    public function changeStatus(Request $request, $id)
+    {
+        $user = app('App\Http\Controllers\UserController')
+                ->getAuth($request->header('Authorization'));
+
+        $exam = Exam::find($id);
+
+        $subject = Subject::where('user_id', $user->sub)->where('id', $exam->subject_id)->first();
+
+        if ($subject) {
+            if ($exam->done == 1) {
+                $exam->done = 0;
+            } else {
+                $exam->done = 1;
+            }
+
+            $exam->update();
+        }
+
+        return response()->json([
+            'code' => 200,
+            'status' => 'success',
+            'exam' => $exam,
+        ]);
+    }
+
     // Añadir examen
     public function store(Request $request)
     {
@@ -108,6 +135,7 @@ class ExamController extends Controller
                     $exam->subject_id = $params->subject_id;
                     $exam->unity_id = $params->unity_id;
                     $exam->title = $params->title;
+                    $exam->description = $params->description;
                     $exam->mark = $params->mark;
                     $exam->exam_date = $params->exam_date;
 
@@ -167,6 +195,7 @@ class ExamController extends Controller
 
                     if ($subject && is_object($subject)) {
                         $exam->title = $params->title;
+                        $exam->description = $params->description;
                         $exam->mark = $params->mark;
                         $exam->exam_date = $params->exam_date;
 

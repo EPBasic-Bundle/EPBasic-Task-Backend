@@ -5,7 +5,6 @@ use App\Exam;
 use App\Subject;
 use App\Task;
 use App\Unity;
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Validator;
@@ -51,8 +50,8 @@ class SubjectController extends Controller
         }
     }
 
-    // Asignatura con tareas
-    public function indexWithAll(Request $request)
+    // Asignatura con toDo
+    public function indexWithAllToDo(Request $request)
     {
         $user = app('App\Http\Controllers\UserController')
             ->getAuth($request->header('Authorization'));
@@ -62,7 +61,38 @@ class SubjectController extends Controller
         if ($subjects && is_object($subjects)) {
             foreach ($subjects as $subject) {
                 $subject->tasks = Task::where('subject_id', $subject->id)->where('done', 0)->get();
-                $subject->exams = Exam::where('subject_id', $subject->id)->where('mark', null)->get();
+                $subject->exams = Exam::where('subject_id', $subject->id)->where('done', 0)->get();
+            }
+
+            $data = array(
+                'code' => 200,
+                'status' => 'success',
+                'subjects' => $subjects,
+            );
+        } else {
+            $data = array(
+                'code' => 200,
+                'status' => 'error',
+            );
+        }
+
+        return response()->json($data, $data['code']);
+    }
+
+    // Asignatura con toDo
+    public function indexWithAll(Request $request)
+    {
+        $user = app('App\Http\Controllers\UserController')
+            ->getAuth($request->header('Authorization'));
+
+        $subjects = Subject::where('user_id', $user->sub)->get();
+
+        if ($subjects && is_object($subjects)) {
+            foreach ($subjects as $subject) {
+                foreach ($subject->units as $unity) {
+                    $subject->tasks = Task::where('unity_id', $unity->id)->get();
+                    $subject->exams = Task::where('unity_id', $unity->id)->get();
+                }
             }
 
             $data = array(

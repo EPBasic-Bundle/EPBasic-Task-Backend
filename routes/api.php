@@ -22,6 +22,7 @@ Route::get('timetable', 'TimetableController@index');
 Route::post('timetable', 'TimetableController@store');
 Route::delete('timetable', 'TimetableController@destroy');
 
+Route::get('subjects/allToDo', 'SubjectController@indexWithAllToDo');
 Route::get('subjects/all', 'SubjectController@indexWithAll');
 Route::get('subject/set-current-unity/{id}', 'SubjectController@setCurrentUnity');
 Route::get('subjects', 'SubjectController@index');
@@ -65,7 +66,8 @@ Route::put('exam/{id}', 'ExamController@update');
 Route::delete('exam/{id}', 'ExamController@destroy');
 
 Route::get('exercise/done/{exercise_id}', 'ExerciseController@changeStatus');
-Route::get('exercises/done/{task_id}', 'ExerciseController@changeStatusAll');
+Route::get('task/done/{task_id}', 'TaskController@changeStatus');
+Route::get('exam/done/{exam_id}', 'ExamController@changeStatus');
 
 Route::get('events', 'EventController@index');
 Route::post('event', 'EventController@store');
