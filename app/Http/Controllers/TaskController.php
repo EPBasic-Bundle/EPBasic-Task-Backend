@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Event;
+use App\Exercise;
+use App\Page;
+use App\Subject;
+use App\Task;
+use App\Unity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Validator;
-
-use App\Task;
-use App\Page;
-use App\Exercise;
-use App\Unity;
-use App\Subject;
 
 class TaskController extends Controller
 {
@@ -18,7 +18,7 @@ class TaskController extends Controller
     public function index(Request $request, $unity_id)
     {
         $user = app('App\Http\Controllers\UserController')
-                ->getAuth($request->header('Authorization'));
+            ->getAuth($request->header('Authorization'));
 
         $unity = Unity::find($unity_id);
 
@@ -27,8 +27,8 @@ class TaskController extends Controller
         if ($subject) {
             $tasks = Task::where('unity_id', $unity->id)->get()->load('pages');
 
-            foreach($tasks as $task) {
-                foreach($task['pages'] as $page) {
+            foreach ($tasks as $task) {
+                foreach ($task['pages'] as $page) {
                     $page->load('exercises');
                 }
             }
@@ -45,15 +45,15 @@ class TaskController extends Controller
     public function indexToDo(Request $request, $subject_id)
     {
         $user = app('App\Http\Controllers\UserController')
-                ->getAuth($request->header('Authorization'));
+            ->getAuth($request->header('Authorization'));
 
         $subject = Subject::where('user_id', $user->sub)->where('id', $subject_id)->first();
 
         if ($subject) {
             $tasks = Task::where('subject_id', $subject->id)->where('done', 0)->get()->load('pages');
 
-            foreach($tasks as $task) {
-                foreach($task['pages'] as $page) {
+            foreach ($tasks as $task) {
+                foreach ($task['pages'] as $page) {
                     $page->load('exercises');
                 }
             }
@@ -70,7 +70,7 @@ class TaskController extends Controller
     public function detail(Request $request, $id, $json = true)
     {
         $user = app('App\Http\Controllers\UserController')
-                ->getAuth($request->header('Authorization'));
+            ->getAuth($request->header('Authorization'));
 
         $task = Task::find($id);
 
@@ -80,7 +80,7 @@ class TaskController extends Controller
             $task->load('pages');
             $task->load('book');
 
-            foreach($task['pages'] as $page) {
+            foreach ($task['pages'] as $page) {
                 $page->load('exercises');
             }
 
@@ -100,7 +100,7 @@ class TaskController extends Controller
     public function changeStatus(Request $request, $id)
     {
         $user = app('App\Http\Controllers\UserController')
-                ->getAuth($request->header('Authorization'));
+            ->getAuth($request->header('Authorization'));
 
         $task = Task::find($id);
 
@@ -111,14 +111,14 @@ class TaskController extends Controller
                 $task->done = 0;
             } else {
                 $task->done = 1;
-            
+
                 $task->load('pages');
 
                 if ($task['pages']) {
-                    foreach($task['pages'] as $page) {
+                    foreach ($task['pages'] as $page) {
                         $page->load('exercises');
 
-                        foreach($page['exercises'] as $exercise) {
+                        foreach ($page['exercises'] as $exercise) {
                             $exercise->done = 1;
                             $exercise->update();
                         }
@@ -127,13 +127,50 @@ class TaskController extends Controller
             }
 
             $task->update();
+
+            $data = array(
+                'code' => 200,
+                'status' => 'success',
+                'task' => $task,
+            );
+        } else {
+            $data = array(
+                'status' => 'error',
+                'code' => 200,
+            );
         }
 
-        return response()->json([
-            'code' => 200,
-            'status' => 'success',
-            'task' => $task,
-        ]);
+        return response()->json($data, $data['code']);
+    }
+
+    // Cambiar día de entrega
+    public function updateDeliveryDay(Request $request, $id)
+    {
+        $user = app('App\Http\Controllers\UserController')
+            ->getAuth($request->header('Authorization'));
+
+        $task = Task::find($id);
+
+        $subject = Subject::where('user_id', $user->sub)->where('id', $task->subject_id)->first();
+
+        if ($subject) {
+            $task->delivery_date = date_format(date_create(json_decode($request->input('json', null))), 'Y-m-d H:i:s');
+
+            $task->update();
+
+            $data = array(
+                'code' => 200,
+                'status' => 'success',
+                'task' => $task,
+            );
+        } else {
+            $data = array(
+                'status' => 'error',
+                'code' => 200,
+            );
+        }
+
+        return response()->json($data, $data['code']);
     }
 
     // Añadir tareas
@@ -198,7 +235,7 @@ class TaskController extends Controller
                     $data = array(
                         'status' => 'success',
                         'code' => 200,
-                        'task' => $this->detail($request, $task->id, false)
+                        'task' => $this->detail($request, $task->id, false),
                     );
                 } else {
                     $data = array(
@@ -254,7 +291,7 @@ class TaskController extends Controller
                         $data = array(
                             'status' => 'success',
                             'code' => 200,
-                            'task' => $this->detail($request, $task->id, false)
+                            'task' => $this->detail($request, $task->id, false),
                         );
                     } else {
                         $data = array(
@@ -273,7 +310,7 @@ class TaskController extends Controller
     public function destroy(Request $request, $id)
     {
         $user = app('App\Http\Controllers\UserController')
-                ->getAuth($request->header('Authorization'));
+            ->getAuth($request->header('Authorization'));
 
         $task = Task::find($id);
 
@@ -289,6 +326,8 @@ class TaskController extends Controller
                     }
                     $page->delete();
                 }
+
+                Event::where('user_id', $user->sub)->where('task_id', $task->id)->first()->delete();
 
                 $task->delete();
 

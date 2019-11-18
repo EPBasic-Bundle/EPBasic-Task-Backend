@@ -1,13 +1,11 @@
 <?php
 use Illuminate\Http\Request;
 
-use App\Http\Middleware\ApiAuthMiddleware;
-
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::group(['middleware' => 'cors', 'prefix' => 'api'], function(){});
+Route::group(['middleware' => 'cors', 'prefix' => 'api'], function () {});
 
 //Rutas controlador Usuario
 Route::post('register', 'UserController@register');
@@ -53,6 +51,7 @@ Route::delete('unity/{id}', 'UnityController@destroy');
 
 Route::get('tasks/todo/{subject_id}', 'TaskController@indexToDo');
 Route::get('tasks/{unity_id}', 'TaskController@index');
+Route::put('task/start/{task_id}', 'TaskController@updateDeliveryDay');
 Route::get('task/{id}', 'TaskController@detail');
 Route::post('task', 'TaskController@store');
 Route::put('task/{id}', 'TaskController@update');
@@ -61,6 +60,7 @@ Route::delete('task/{id}', 'TaskController@destroy');
 Route::get('exams/todo/{subject_id}', 'ExamController@indexToDo');
 Route::get('exams/{unity_id}', 'ExamController@index');
 Route::get('exam/{id}', 'ExamController@detail');
+Route::put('exam/start/{exam_id}', 'ExamController@updateExamDay');
 Route::post('exam', 'ExamController@store');
 Route::put('exam/{id}', 'ExamController@update');
 Route::delete('exam/{id}', 'ExamController@destroy');

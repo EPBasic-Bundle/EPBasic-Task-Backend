@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Event;
+use App\Exam;
+use App\Subject;
+use App\Unity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Validator;
-
-use App\Exam;
-use App\Unity;
-use App\Subject;
 
 class ExamController extends Controller
 {
@@ -16,7 +16,7 @@ class ExamController extends Controller
     public function index(Request $request, $unity_id)
     {
         $user = app('App\Http\Controllers\UserController')
-                ->getAuth($request->header('Authorization'));
+            ->getAuth($request->header('Authorization'));
 
         $unity = Unity::find($unity_id);
 
@@ -37,7 +37,7 @@ class ExamController extends Controller
     public function indexToDo(Request $request, $subject_id)
     {
         $user = app('App\Http\Controllers\UserController')
-                ->getAuth($request->header('Authorization'));
+            ->getAuth($request->header('Authorization'));
 
         $subject = Subject::where('user_id', $user->sub)->where('id', $subject_id)->first();
 
@@ -56,7 +56,7 @@ class ExamController extends Controller
     public function detail(Request $request, $id, $json = true)
     {
         $user = app('App\Http\Controllers\UserController')
-                ->getAuth($request->header('Authorization'));
+            ->getAuth($request->header('Authorization'));
 
         $exam = Exam::find($id);
 
@@ -79,7 +79,7 @@ class ExamController extends Controller
     public function changeStatus(Request $request, $id)
     {
         $user = app('App\Http\Controllers\UserController')
-                ->getAuth($request->header('Authorization'));
+            ->getAuth($request->header('Authorization'));
 
         $exam = Exam::find($id);
 
@@ -100,6 +100,36 @@ class ExamController extends Controller
             'status' => 'success',
             'exam' => $exam,
         ]);
+    }
+
+    // Cambiar día del examen
+    public function updateExamDay(Request $request, $id)
+    {
+        $user = app('App\Http\Controllers\UserController')
+            ->getAuth($request->header('Authorization'));
+
+        $exam = Exam::find($id);
+
+        $subject = Subject::where('user_id', $user->sub)->where('id', $exam->subject_id)->first();
+
+        if ($subject) {
+            $exam->exam_date = date_format(date_create(json_decode($request->input('json', null))), 'Y-m-d H:i:s');
+
+            $exam->update();
+
+            $data = array(
+                'code' => 200,
+                'status' => 'success',
+                'exam' => $exam,
+            );
+        } else {
+            $data = array(
+                'status' => 'error',
+                'code' => 200,
+            );
+        }
+
+        return response()->json($data, $data['code']);
     }
 
     // Añadir examen
@@ -148,7 +178,7 @@ class ExamController extends Controller
                     $data = array(
                         'status' => 'success',
                         'code' => 200,
-                        'exam' => $this->detail($request, $exam->id, false)
+                        'exam' => $this->detail($request, $exam->id, false),
                     );
                 } else {
                     $data = array(
@@ -208,7 +238,7 @@ class ExamController extends Controller
                         $data = array(
                             'status' => 'success',
                             'code' => 200,
-                            'exam' => $this->detail($request, $exam->id, false)
+                            'exam' => $this->detail($request, $exam->id, false),
                         );
                     } else {
                         $data = array(
@@ -227,7 +257,7 @@ class ExamController extends Controller
     public function destroy(Request $request, $id)
     {
         $user = app('App\Http\Controllers\UserController')
-                ->getAuth($request->header('Authorization'));
+            ->getAuth($request->header('Authorization'));
 
         $exam = Exam::find($id);
 
@@ -235,6 +265,8 @@ class ExamController extends Controller
             $subject = Subject::where('user_id', $user->sub)->where('id', $exam->subject_id)->first();
 
             if ($subject && is_object($subject)) {
+                Event::where('user_id', $user->sub)->where('exam_id', $exam->id)->first()->delete();
+
                 $exam->delete();
 
                 $data = array(
