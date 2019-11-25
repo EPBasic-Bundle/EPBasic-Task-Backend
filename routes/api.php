@@ -21,9 +21,9 @@ Route::post('timetable', 'TimetableController@store');
 Route::delete('timetable', 'TimetableController@destroy');
 
 Route::get('subjects/allToDo', 'SubjectController@indexWithAllToDo');
-Route::get('subjects/all', 'SubjectController@indexWithAll');
 Route::get('subject/set-current-unity/{id}', 'SubjectController@setCurrentUnity');
 Route::get('subjects', 'SubjectController@index');
+Route::get('subject/all/{id}', 'SubjectController@detailWithAll');
 Route::get('subject/{id}', 'SubjectController@detail');
 Route::post('subject', 'SubjectController@store');
 Route::put('subject/{id}', 'SubjectController@update');

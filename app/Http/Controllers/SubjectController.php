@@ -79,26 +79,24 @@ class SubjectController extends Controller
         return response()->json($data, $data['code']);
     }
 
-    // Asignatura con toDo
-    public function indexWithAll(Request $request)
+    // Asignatura con TODO
+    public function detailWithAll(Request $request, $id)
     {
         $user = app('App\Http\Controllers\UserController')
             ->getAuth($request->header('Authorization'));
 
-        $subjects = Subject::where('user_id', $user->sub)->get();
+        $subject = Subject::where('id', $id)->where('user_id', $user->sub)->first();
 
-        if ($subjects && is_object($subjects)) {
-            foreach ($subjects as $subject) {
-                foreach ($subject->units as $unity) {
-                    $subject->tasks = Task::where('unity_id', $unity->id)->get();
-                    $subject->exams = Task::where('unity_id', $unity->id)->get();
-                }
+        if ($subject && is_object($subject)) {
+            foreach ($subject->units as $unity) {
+                $subject->tasks = Task::where('unity_id', $unity->id)->get();
+                $subject->exams = Task::where('unity_id', $unity->id)->get();
             }
 
             $data = array(
                 'code' => 200,
                 'status' => 'success',
-                'subjects' => $subjects,
+                'subject' => $subject,
             );
         } else {
             $data = array(
@@ -171,6 +169,7 @@ class SubjectController extends Controller
                 $subject->exams_percentage = $params->exams_percentage;
                 $subject->projects_percentage = $params->projects_percentage;
                 $subject->behaviour_percentage = $params->behaviour_percentage;
+                $subject->tasks_has_mark = $params->tasks_has_mark;
 
                 $subject->save();
 
@@ -219,6 +218,7 @@ class SubjectController extends Controller
                     $subject->exams_percentage = $params->exams_percentage;
                     $subject->projects_percentage = $params->projects_percentage;
                     $subject->behavior_percentage = $params->behavior_percentage;
+                    $subject->tasks_has_mark = $params->tasks_has_mark;
 
                     $subject->update();
 
