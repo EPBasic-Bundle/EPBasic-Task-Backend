@@ -10,6 +10,6 @@ class Study extends Model
 
     public function evaluations()
     {
-        return $this->hasMany('App\Evaluation', 'study_id');
+        return $this->hasMany('App\Year', 'study_id');
     }
 }

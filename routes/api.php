@@ -78,3 +78,13 @@ Route::get('studies', 'StudyController@index');
 Route::post('study', 'StudyController@store');
 Route::put('study/{id}', 'StudyController@update');
 Route::delete('study/{id}', 'StudyController@destroy');
+
+Route::get('years/{study_id}', 'YearController@index');
+Route::post('year', 'YearController@store');
+Route::put('year/{id}', 'YearController@update');
+Route::delete('year/{id}', 'YearController@destroy');
+
+Route::get('evaluations/{year_id}', 'EvaluationController@index');
+Route::post('evaluation', 'EvaluationController@store');
+Route::put('evaluation/{id}', 'EvaluationController@update');
+Route::delete('evaluation/{id}', 'EvaluationController@destroy');
