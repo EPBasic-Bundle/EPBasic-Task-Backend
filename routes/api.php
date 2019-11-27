@@ -73,3 +73,8 @@ Route::get('events', 'EventController@index');
 Route::post('event', 'EventController@store');
 Route::put('event/{id}', 'EventController@update');
 Route::delete('event/{id}', 'EventController@destroy');
+
+Route::get('studies', 'StudyController@index');
+Route::post('study', 'StudyController@store');
+Route::put('study/{id}', 'StudyController@update');
+Route::delete('study/{id}', 'StudyController@destroy');
