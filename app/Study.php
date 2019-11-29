@@ -8,7 +8,7 @@ class Study extends Model
 {
     protected $table = 'studies';
 
-    public function evaluations()
+    public function years()
     {
         return $this->hasMany('App\Year', 'study_id');
     }

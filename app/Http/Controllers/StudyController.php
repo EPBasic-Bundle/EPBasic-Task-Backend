@@ -17,6 +17,17 @@ class StudyController extends Controller
 
         $studies = Study::where('user_id', $user->sub)->get();
 
+        if ($studies && is_object($studies)) {
+            foreach ($studies as $study) {
+                $study->load('years');
+
+                foreach ($study['years'] as $year) {
+                    $year->load('evaluations');
+
+                }
+            }
+        }
+
         return response()->json([
             'code' => 200,
             'status' => 'success',

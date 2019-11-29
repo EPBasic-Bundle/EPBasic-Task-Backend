@@ -9,21 +9,6 @@ use Validator;
 
 class YearController extends Controller
 {
-    // Años
-    public function index(Request $request, $study_id)
-    {
-        $user = app('App\Http\Controllers\UserController')
-            ->getAuth($request->header('Authorization'));
-
-        $years = Year::where('study_id', $study_id)->where('user_id', $user->sub)->get();
-
-        return response()->json([
-            'code' => 200,
-            'status' => 'success',
-            'years' => $years,
-        ]);
-    }
-
     // Añadir año
     public function store(Request $request)
     {
