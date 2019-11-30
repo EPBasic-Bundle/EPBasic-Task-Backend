@@ -3,10 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Exercise;
-use App\Subject;
 use App\Page;
+use App\Subject;
 use App\Task;
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 
@@ -16,13 +15,13 @@ class ExerciseController extends Controller
     public function changeStatus(Request $request, $id)
     {
         $user = app('App\Http\Controllers\UserController')
-                ->getAuth($request->header('Authorization'));
+            ->getAuth($request->header('Authorization'));
 
         $exercise = Exercise::find($id);
         $page = Page::find($exercise->page_id);
         $task = Task::find($page->task_id);
 
-        $subject = Subject::where('user_id', $user->sub)->where('id', $task->subject_id)->first();
+        $subject = Subject::where('user_id', $user->sub)->where('id', $task->subject_id)->where('year_id', $user->year_id)->first();
 
         if ($subject) {
             if ($exercise->done == 1) {

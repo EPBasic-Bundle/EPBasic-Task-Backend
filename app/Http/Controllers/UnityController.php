@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Subject;
+use App\Unity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Validator;
-
-use App\Unity;
-use App\Subject;
 
 class UnityController extends Controller
 {
@@ -15,9 +14,9 @@ class UnityController extends Controller
     public function index(Request $request, $subject_id)
     {
         $user = app('App\Http\Controllers\UserController')
-                ->getAuth($request->header('Authorization'));
+            ->getAuth($request->header('Authorization'));
 
-        $subject = Subject::where('user_id', $user->sub)->where('id', $subject_id)->first();
+        $subject = Subject::where('user_id', $user->sub)->where('id', $subject_id)->where('year_id', $user->year_id)->first();
 
         if ($subject) {
             $units = Unity::where('subject_id', $subject_id)->orderBy('number', 'desc')->get();
@@ -34,11 +33,11 @@ class UnityController extends Controller
     public function detail(Request $request, $id, $json = true)
     {
         $user = app('App\Http\Controllers\UserController')
-                ->getAuth($request->header('Authorization'));
+            ->getAuth($request->header('Authorization'));
 
         $unity = Unity::find($id);
 
-        $subject = Subject::where('user_id', $user->sub)->where('id', $unity->subject_id)->first();
+        $subject = Subject::where('user_id', $user->sub)->where('id', $unity->subject_id)->where('year_id', $user->year_id)->first();
 
         if ($subject) {
             if ($json == true) {
@@ -76,7 +75,7 @@ class UnityController extends Controller
                     'errors' => $validate->errors(),
                 );
             } else {
-                $subject = Subject::where('user_id', $user->sub)->where('id', $params->subject_id)->first();
+                $subject = Subject::where('user_id', $user->sub)->where('id', $params->subject_id)->where('year_id', $user->year_id)->first();
 
                 if ($subject && is_object($subject)) {
                     $unity = new Unity();
@@ -88,7 +87,7 @@ class UnityController extends Controller
                     $data = array(
                         'status' => 'success',
                         'code' => 200,
-                        'unity' => $this->detail($request, $unity->id, false)
+                        'unity' => $this->detail($request, $unity->id, false),
                     );
                 } else {
                     $data = array(
@@ -132,7 +131,7 @@ class UnityController extends Controller
                 $unity = Unity::find($id);
 
                 if ($unity && is_object($unity)) {
-                    $subject = Subject::where('user_id', $user->sub)->where('id', $unity->subject_id)->first();
+                    $subject = Subject::where('user_id', $user->sub)->where('id', $unity->subject_id)->where('year_id', $user->year_id)->first();
 
                     if ($subject && is_object($subject)) {
                         $unity->number = $params->number;
@@ -142,7 +141,7 @@ class UnityController extends Controller
                         $data = array(
                             'status' => 'success',
                             'code' => 200,
-                            'unity' => $this->detail($request, $unity->id, false)
+                            'unity' => $this->detail($request, $unity->id, false),
                         );
                     } else {
                         $data = array(
@@ -161,12 +160,12 @@ class UnityController extends Controller
     public function destroy(Request $request, $id)
     {
         $user = app('App\Http\Controllers\UserController')
-                ->getAuth($request->header('Authorization'));
+            ->getAuth($request->header('Authorization'));
 
         $unity = Unity::find($id);
 
         if ($unity && is_object($unity)) {
-            $subject = Subject::where('user_id', $user->sub)->where('id', $unity->subject_id)->first();
+            $subject = Subject::where('user_id', $user->sub)->where('id', $unity->subject_id)->where('year_id', $user->year_id)->first();
 
             if ($subject && is_object($subject)) {
                 $unity->load('tasks');

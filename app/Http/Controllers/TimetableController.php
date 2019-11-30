@@ -1,18 +1,17 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\User;
 use App\Timetable;
-use App\TimetableSubject;
 use App\TimetableHour;
-
+use App\TimetableSubject;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Validator;
 
 class TimetableController extends Controller
 {
-    public function __construct() {
+    public function __construct()
+    {
         $this->middleware('api.auth');
     }
 
@@ -22,7 +21,7 @@ class TimetableController extends Controller
         $user = app('App\Http\Controllers\UserController')
             ->getAuth($request->header('Authorization'));
 
-        $timetable = Timetable::where('user_id', $user->sub)->first();
+        $timetable = Timetable::where('user_id', $user->sub)->where('year_id', $user->year_id)->first();
 
         if ($timetable && is_object($timetable)) {
             $timetable->load('subjects')->load('hours');
@@ -34,7 +33,7 @@ class TimetableController extends Controller
                 'code' => 200,
                 'status' => 'success',
                 'timetable' => $timetable,
-                'subjects' => $subjects
+                'subjects' => $subjects,
             ]);
         } else {
             return response()->json([
@@ -45,7 +44,7 @@ class TimetableController extends Controller
     }
 
     /**********************************************************************************************/
-                                            /* CRUD */
+    /* CRUD */
     /**********************************************************************************************/
 
     //Crear horario
@@ -68,7 +67,7 @@ class TimetableController extends Controller
                     'errors' => $validate->errors(),
                 );
             } else {
-                $timetable = Timetable::where('user_id', $user->sub)->first();
+                $timetable = Timetable::where('user_id', $user->sub)->where('year_id', $user->year_id)->first();
 
                 if ($timetable) {
                     $this->DeleteTimetable($timetable);
@@ -78,6 +77,8 @@ class TimetableController extends Controller
 
                 $timetable->user_id = $user->sub;
                 $timetable->rows = $params->rows;
+                $timetable->year_id = $user->year_id;
+
                 $timetable->save();
 
                 foreach ($params->subjects as $subjectRow) {
@@ -118,9 +119,9 @@ class TimetableController extends Controller
     public function destroy(Request $request)
     {
         $user = app('App\Http\Controllers\UserController')
-                ->getAuth($request->header('Authorization'));
+            ->getAuth($request->header('Authorization'));
 
-        $timetable = Timetable::where('user_id', $user->sub)->first();
+        $timetable = Timetable::where('user_id', $user->sub)->where('year_id', $user->year_id)->first();
 
         if ($timetable && is_object($timetable)) {
             $timetable->load('subjects')->load('hours');
@@ -129,7 +130,7 @@ class TimetableController extends Controller
                 $subject->delete();
             }
 
-            foreach ($timetable['hours']  as $hour) {
+            foreach ($timetable['hours'] as $hour) {
                 $hour->delete();
             }
 
@@ -148,8 +149,9 @@ class TimetableController extends Controller
         return response()->json($data, $data['code']);
     }
 
-    public function DeleteTimetable($timetable) {
-        $timetableSubjects = TimetableSubject::where('timetable_id', $timetable->id)->get();
+    public function DeleteTimetable($timetable)
+    {
+        $timetableSubjects = TimetableSubject::where('timetable_id', $timetable->id)->where('year_id', $user->year_id)->get();
 
         foreach ($timetableSubjects as $timetableSubject) {
             $timetableSubject->delete();

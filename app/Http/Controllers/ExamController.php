@@ -20,7 +20,7 @@ class ExamController extends Controller
 
         $unity = Unity::find($unity_id);
 
-        $subject = Subject::where('user_id', $user->sub)->where('id', $unity->subject_id)->first();
+        $subject = Subject::where('user_id', $user->sub)->where('id', $unity->subject_id)->where('year_id', $user->year_id)->first();
 
         if ($subject) {
             $exams = Exam::where('unity_id', $unity->id)->get();
@@ -39,7 +39,7 @@ class ExamController extends Controller
         $user = app('App\Http\Controllers\UserController')
             ->getAuth($request->header('Authorization'));
 
-        $subject = Subject::where('user_id', $user->sub)->where('id', $subject_id)->first();
+        $subject = Subject::where('user_id', $user->sub)->where('id', $subject_id)->where('year_id', $user->year_id)->first();
 
         if ($subject) {
             $exams = Exam::where('subject_id', $subject->id)->where('done', false)->get();
@@ -60,7 +60,7 @@ class ExamController extends Controller
 
         $exam = Exam::find($id);
 
-        $subject = Subject::where('user_id', $user->sub)->where('id', $exam->subject_id)->first();
+        $subject = Subject::where('user_id', $user->sub)->where('id', $exam->subject_id)->where('year_id', $user->year_id)->first();
 
         if ($subject) {
             if ($json == true) {
@@ -83,7 +83,7 @@ class ExamController extends Controller
 
         $exam = Exam::find($id);
 
-        $subject = Subject::where('user_id', $user->sub)->where('id', $exam->subject_id)->first();
+        $subject = Subject::where('user_id', $user->sub)->where('id', $exam->subject_id)->where('year_id', $user->year_id)->first();
 
         if ($subject) {
             if ($exam->done == 1) {
@@ -110,7 +110,7 @@ class ExamController extends Controller
 
         $exam = Exam::find($id);
 
-        $subject = Subject::where('user_id', $user->sub)->where('id', $exam->subject_id)->first();
+        $subject = Subject::where('user_id', $user->sub)->where('id', $exam->subject_id)->where('year_id', $user->year_id)->first();
 
         if ($subject) {
             $exam->exam_date = date_format(date_create(json_decode($request->input('json', null))), 'Y-m-d H:i:s');
@@ -157,7 +157,7 @@ class ExamController extends Controller
                     'errors' => $validate->errors(),
                 );
             } else {
-                $subject = Subject::where('user_id', $user->sub)->where('id', $params->subject_id)->first();
+                $subject = Subject::where('user_id', $user->sub)->where('id', $params->subject_id)->where('year_id', $user->year_id)->first();
 
                 if ($subject && is_object($subject)) {
                     $exam = new Exam();
@@ -221,7 +221,7 @@ class ExamController extends Controller
                 $exam = Exam::find($id);
 
                 if ($exam && is_object($exam)) {
-                    $subject = Subject::where('user_id', $user->sub)->where('id', $exam->subject_id)->first();
+                    $subject = Subject::where('user_id', $user->sub)->where('id', $exam->subject_id)->where('year_id', $user->year_id)->first();
 
                     if ($subject && is_object($subject)) {
                         $exam->title = $params->title;
@@ -262,7 +262,7 @@ class ExamController extends Controller
         $exam = Exam::find($id);
 
         if ($exam && is_object($exam)) {
-            $subject = Subject::where('user_id', $user->sub)->where('id', $exam->subject_id)->first();
+            $subject = Subject::where('user_id', $user->sub)->where('id', $exam->subject_id)->where('year_id', $user->year_id)->first();
 
             if ($subject && is_object($subject)) {
                 Event::where('user_id', $user->sub)->where('exam_id', $exam->id)->first()->delete();

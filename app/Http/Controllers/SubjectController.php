@@ -22,7 +22,7 @@ class SubjectController extends Controller
         $user = app('App\Http\Controllers\UserController')
             ->getAuth($request->header('Authorization'));
 
-        $subjects = Subject::where('user_id', $user->sub)->get();
+        $subjects = Subject::where('user_id', $user->sub)->where('year_id', $user->year_id)->get();
 
         return response()->json([
             'code' => 200,
@@ -37,7 +37,7 @@ class SubjectController extends Controller
         $user = app('App\Http\Controllers\UserController')
             ->getAuth($request->header('Authorization'));
 
-        $subject = Subject::where('id', $id)->where('user_id', $user->sub)->first();
+        $subject = Subject::where('id', $id)->where('user_id', $user->sub)->where('year_id', $user->year_id)->first();
 
         if ($json == true) {
             return response()->json([
@@ -56,7 +56,7 @@ class SubjectController extends Controller
         $user = app('App\Http\Controllers\UserController')
             ->getAuth($request->header('Authorization'));
 
-        $subjects = Subject::where('user_id', $user->sub)->get();
+        $subjects = Subject::where('user_id', $user->sub)->where('year_id', $user->year_id)->get();
 
         if ($subjects && is_object($subjects)) {
             foreach ($subjects as $subject) {
@@ -85,7 +85,7 @@ class SubjectController extends Controller
         $user = app('App\Http\Controllers\UserController')
             ->getAuth($request->header('Authorization'));
 
-        $subject = Subject::where('id', $id)->where('user_id', $user->sub)->first();
+        $subject = Subject::where('id', $id)->where('user_id', $user->sub)->where('year_id', $user->year_id)->first();
 
         if ($subject && is_object($subject)) {
             foreach ($subject->units as $unity) {
@@ -116,7 +116,7 @@ class SubjectController extends Controller
 
         $unity = Unity::find($id);
 
-        $subject = Subject::where('user_id', $user->sub)->where('id', $unity->subject_id)->first();
+        $subject = Subject::where('user_id', $user->sub)->where('id', $unity->subject_id)->where('year_id', $user->year_id)->first();
 
         if ($subject) {
             $subject->current_unity = $id;
@@ -170,6 +170,7 @@ class SubjectController extends Controller
                 $subject->projects_percentage = $params->projects_percentage;
                 $subject->behaviour_percentage = $params->behaviour_percentage;
                 $subject->tasks_has_mark = $params->tasks_has_mark;
+                $subject->year_id = $user->year_id;
 
                 $subject->save();
 
@@ -208,7 +209,7 @@ class SubjectController extends Controller
                 $user = app('App\Http\Controllers\UserController')
                     ->getAuth($request->header('Authorization'));
 
-                $subject = Subject::where('id', $id)->where('user_id', $user->sub)->first();
+                $subject = Subject::where('id', $id)->where('user_id', $user->sub)->where('year_id', $user->year_id)->first();
 
                 if ($subject && is_object($subject)) {
                     $subject->name = $params->name;
@@ -250,7 +251,7 @@ class SubjectController extends Controller
         $user = app('App\Http\Controllers\UserController')
             ->getAuth($request->header('Authorization'));
 
-        $subject = Subject::where('user_id', $user->sub)->where('id', $id)->first();
+        $subject = Subject::where('user_id', $user->sub)->where('id', $id)->where('year_id', $user->year_id)->first();
 
         if ($subject && is_object($subject)) {
             $subject->load('books');

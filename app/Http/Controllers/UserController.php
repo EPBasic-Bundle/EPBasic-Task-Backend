@@ -3,14 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\JwtAuth;
-
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
-
-use App\User;
-
-use File;
-use Storage;
 use Validator;
 
 class UserController extends Controller
@@ -21,7 +16,7 @@ class UserController extends Controller
     }
 
     /**********************************************************************************************/
-                                        /* Funciones */
+    /* Funciones */
     /**********************************************************************************************/
 
     public function getAuth($token)
@@ -31,29 +26,29 @@ class UserController extends Controller
     }
 
     //Comprobar que el ID de usuario coincida con el Token
-    public function checkRealIdentity(Request $request, $user_id) {
+    public function checkRealIdentity(Request $request, $user_id)
+    {
         $user = $this->getAuth($request->header('Authorization'));
 
         if ($user->sub == $user_id) {
             $data = array(
                 'status' => 'success',
                 'code' => 200,
-                'real' => true
+                'real' => true,
             );
         } else {
             $data = array(
                 'status' => 'success',
                 'code' => 200,
-                'real' => false
+                'real' => false,
             );
         }
 
         return response()->json($data, $data['code']);
     }
 
-
     /**********************************************************************************************/
-                                            /* CRUD */
+    /* CRUD */
     /**********************************************************************************************/
 
     //Registrar
@@ -101,7 +96,7 @@ class UserController extends Controller
             $data = array(
                 'status' => 'error',
                 'code' => 200,
-                'json' => $json
+                'json' => $json,
             );
         }
 
@@ -126,7 +121,7 @@ class UserController extends Controller
             $data = array(
                 'status' => 'error',
                 'code' => 200,
-                'errors' => $validate->errors()
+                'errors' => $validate->errors(),
             );
         } else {
             //Cifrar contraseña
@@ -140,13 +135,13 @@ class UserController extends Controller
                     'status' => 'success',
                     'code' => 200,
                     'identity' => $identity,
-                    'token' =>$token
+                    'token' => $token,
                 );
             } else {
                 $data = array(
                     'status' => 'error',
                     'msCode' => 1,
-                    'code' => 200
+                    'code' => 200,
                 );
             }
         }
@@ -154,7 +149,8 @@ class UserController extends Controller
         return response()->json($data, $data['code']);
     }
 
-    public function unblockUser(Request $request, $user_id, $pinCode) {
+    public function unblockUser(Request $request, $user_id, $pinCode)
+    {
         $user = User::where('id', $user_id)->where('pinCode', $pinCode)->first();
 
         $jwtAuth = new JwtAuth();
@@ -167,19 +163,20 @@ class UserController extends Controller
                 'status' => 'success',
                 'code' => 200,
                 'identity' => $identity,
-                'token' =>$token
+                'token' => $token,
             );
         } else {
             $data = array(
                 'status' => 'error',
-                'code' => 200
+                'code' => 200,
             );
         }
 
         return response()->json($data, $data['code']);
     }
 
-    public function changePinCode(Request $request) {
+    public function changePinCode(Request $request)
+    {
         $user = $this->getAuth($request->header('Authorization'));
 
         if (!is_null($user)) {
@@ -192,19 +189,20 @@ class UserController extends Controller
             $data = array(
                 'status' => 'success',
                 'code' => 200,
-                'pinCode' => $pinCode
+                'pinCode' => $pinCode,
             );
         } else {
             $data = array(
                 'status' => 'error',
-                'code' => 200
+                'code' => 200,
             );
         }
 
         return response()->json($data, $data['code']);
     }
 
-    public function getPinCode(Request $request) {
+    public function getPinCode(Request $request)
+    {
         $user = $this->getAuth($request->header('Authorization'));
 
         if (!is_null($user)) {
@@ -213,12 +211,39 @@ class UserController extends Controller
             $data = array(
                 'status' => 'success',
                 'code' => 200,
-                'pinCode' => $user->pinCode
+                'pinCode' => $user->pinCode,
             );
         } else {
             $data = array(
                 'status' => 'error',
-                'code' => 200
+                'code' => 200,
+            );
+        }
+
+        return response()->json($data, $data['code']);
+    }
+
+    public function changeYear(Request $request, $year_id)
+    {
+        $jwtAuth = new JwtAuth();
+
+        $user = $this->getAuth($request->header('Authorization'));
+
+        if (!is_null($user)) {
+            $user = User::find($user->sub);
+            $user->year_id = $year_id;
+            $user->update();
+
+            $data = array(
+                'status' => 'success',
+                'code' => 200,
+                'identity' => $jwtAuth->returnToken($user),
+                'token' => $jwtAuth->returnToken($user, 1),
+            );
+        } else {
+            $data = array(
+                'status' => 'error',
+                'code' => 200,
             );
         }
 

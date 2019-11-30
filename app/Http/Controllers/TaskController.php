@@ -22,7 +22,7 @@ class TaskController extends Controller
 
         $unity = Unity::find($unity_id);
 
-        $subject = Subject::where('user_id', $user->sub)->where('id', $unity->subject_id)->first();
+        $subject = Subject::where('user_id', $user->sub)->where('id', $unity->subject_id)->where('year_id', $user->year_id)->first();
 
         if ($subject) {
             $tasks = Task::where('unity_id', $unity->id)->get()->load('pages');
@@ -47,7 +47,7 @@ class TaskController extends Controller
         $user = app('App\Http\Controllers\UserController')
             ->getAuth($request->header('Authorization'));
 
-        $subject = Subject::where('user_id', $user->sub)->where('id', $subject_id)->first();
+        $subject = Subject::where('user_id', $user->sub)->where('id', $subject_id)->where('year_id', $user->year_id)->first();
 
         if ($subject) {
             $tasks = Task::where('subject_id', $subject->id)->where('done', 0)->get()->load('pages');
@@ -74,7 +74,7 @@ class TaskController extends Controller
 
         $task = Task::find($id);
 
-        $subject = Subject::where('user_id', $user->sub)->where('id', $task->subject_id)->first();
+        $subject = Subject::where('user_id', $user->sub)->where('id', $task->subject_id)->where('year_id', $user->year_id)->first();
 
         if ($subject) {
             $task->load('pages');
@@ -104,7 +104,7 @@ class TaskController extends Controller
 
         $task = Task::find($id);
 
-        $subject = Subject::where('user_id', $user->sub)->where('id', $task->subject_id)->first();
+        $subject = Subject::where('user_id', $user->sub)->where('id', $task->subject_id)->where('year_id', $user->year_id)->first();
 
         if ($subject) {
             if ($task->done == 1) {
@@ -151,7 +151,7 @@ class TaskController extends Controller
 
         $task = Task::find($id);
 
-        $subject = Subject::where('user_id', $user->sub)->where('id', $task->subject_id)->first();
+        $subject = Subject::where('user_id', $user->sub)->where('id', $task->subject_id)->where('year_id', $user->year_id)->first();
 
         if ($subject) {
             $task->delivery_date = date_format(date_create(json_decode($request->input('json', null))), 'Y-m-d H:i:s');
@@ -198,7 +198,7 @@ class TaskController extends Controller
                     'errors' => $validate->errors(),
                 );
             } else {
-                $subject = Subject::where('user_id', $user->sub)->where('id', $params->subject_id)->first();
+                $subject = Subject::where('user_id', $user->sub)->where('id', $params->subject_id)->where('year_id', $user->year_id)->first();
 
                 if ($subject && is_object($subject)) {
 
@@ -278,7 +278,7 @@ class TaskController extends Controller
                 $task = Task::find($id);
 
                 if ($task && is_object($task)) {
-                    $subject = Subject::where('user_id', $user->sub)->where('id', $task->subject_id)->first();
+                    $subject = Subject::where('user_id', $user->sub)->where('id', $task->subject_id)->where('year_id', $user->year_id)->first();
 
                     if ($subject && is_object($subject)) {
                         $task->book_id = $params->book_id;
@@ -315,7 +315,7 @@ class TaskController extends Controller
         $task = Task::find($id);
 
         if ($task && is_object($task)) {
-            $subject = Subject::where('user_id', $user->sub)->where('id', $task->subject_id)->first();
+            $subject = Subject::where('user_id', $user->sub)->where('id', $task->subject_id)->where('year_id', $user->year_id)->first();
 
             if ($subject && is_object($subject)) {
                 $task->load('pages');

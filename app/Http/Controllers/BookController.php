@@ -2,10 +2,9 @@
 namespace App\Http\Controllers;
 
 use App\Book;
+use App\SavedPage;
 use App\Subject;
 use App\Unity;
-use App\SavedPage;
-
 use File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
@@ -25,7 +24,7 @@ class BookController extends Controller
         $user = app('App\Http\Controllers\UserController')
             ->getAuth($request->header('Authorization'));
 
-        $subject = Subject::where('user_id', $user->sub)->where('id', $subject_id)->first();
+        $subject = Subject::where('user_id', $user->sub)->where('id', $subject_id)->where('year_id', $user->year_id)->first();
 
         if ($subject) {
             $books = Book::where('subject_id', $subject_id)->get();
@@ -51,7 +50,7 @@ class BookController extends Controller
 
         $book = Book::find($id);
 
-        $subject = Subject::where('user_id', $user->sub)->where('id', $book->subject_id)->first();
+        $subject = Subject::where('user_id', $user->sub)->where('id', $book->subject_id)->where('year_id', $user->year_id)->first();
 
         if ($subject) {
             if ($json == true) {
@@ -95,7 +94,7 @@ class BookController extends Controller
                     'errors' => $validate->errors(),
                 );
             } else {
-                $subject = Subject::where('user_id', $user->sub)->where('id', $params->subject_id)->first();
+                $subject = Subject::where('user_id', $user->sub)->where('id', $params->subject_id)->where('year_id', $user->year_id)->first();
 
                 if ($subject && is_object($subject)) {
                     $book = new Book();
@@ -157,7 +156,7 @@ class BookController extends Controller
                 $book = Book::find($id);
 
                 if ($book && is_object($book)) {
-                    $subject = Subject::where('user_id', $user->sub)->where('id', $book->subject_id)->first();
+                    $subject = Subject::where('user_id', $user->sub)->where('id', $book->subject_id)->where('year_id', $user->year_id)->first();
 
                     if ($subject && is_object($subject)) {
                         $book->name = $params->name;
@@ -200,7 +199,7 @@ class BookController extends Controller
         $book = Book::find($id);
 
         if ($book && is_object($book)) {
-            $subject = Subject::where('user_id', $user->sub)->where('id', $book->subject_id)->first();
+            $subject = Subject::where('user_id', $user->sub)->where('id', $book->subject_id)->where('year_id', $user->year_id)->first();
 
             if ($subject && is_object($subject)) {
                 $book->delete();
@@ -251,7 +250,7 @@ class BookController extends Controller
                 'code' => 200,
                 'status' => 'success',
                 'pdf' => $pdf_name,
-                'iss' => $isset
+                'iss' => $isset,
             );
         }
 
@@ -266,7 +265,7 @@ class BookController extends Controller
 
         $book = Book::find($book_id);
 
-        $subject = Subject::where('user_id', $user->sub)->where('id', $book->subject_id)->first();
+        $subject = Subject::where('user_id', $user->sub)->where('id', $book->subject_id)->where('year_id', $user->year_id)->first();
 
         if ($subject) {
             $book->last_seen_page = $page_number;
@@ -275,7 +274,7 @@ class BookController extends Controller
             $data = array(
                 'status' => 'success',
                 'code' => 200,
-                'book' => $book
+                'book' => $book,
             );
         } else {
             $data = array(
@@ -298,7 +297,7 @@ class BookController extends Controller
 
         $unity = Unity::find($params->unity_id);
 
-        $subject = Subject::where('user_id', $user->sub)->where('id', $unity->subject_id)->first();
+        $subject = Subject::where('user_id', $user->sub)->where('id', $unity->subject_id)->where('year_id', $user->year_id)->first();
 
         if ($subject) {
             $savedPage = new SavedPage();
@@ -312,7 +311,7 @@ class BookController extends Controller
             $data = array(
                 'status' => 'success',
                 'code' => 200,
-                'savedPage' => $savedPage
+                'savedPage' => $savedPage,
             );
         } else {
             $data = array(
@@ -337,7 +336,7 @@ class BookController extends Controller
 
         $unity = Unity::find($savedPage->unity_id);
 
-        $subject = Subject::where('user_id', $user->sub)->where('id', $unity->subject_id)->first();
+        $subject = Subject::where('user_id', $user->sub)->where('id', $unity->subject_id)->where('year_id', $user->year_id)->first();
 
         if ($subject) {
             $savedPage->note = $params->note;
@@ -348,7 +347,7 @@ class BookController extends Controller
             $data = array(
                 'status' => 'success',
                 'code' => 200,
-                'savedPage' => $savedPage
+                'savedPage' => $savedPage,
             );
         } else {
             $data = array(
@@ -373,7 +372,7 @@ class BookController extends Controller
 
         $unity = Unity::find($savedPage->unity_id);
 
-        $subject = Subject::where('user_id', $user->sub)->where('id', $unity->subject_id)->first();
+        $subject = Subject::where('user_id', $user->sub)->where('id', $unity->subject_id)->where('year_id', $user->year_id)->first();
 
         if ($subject) {
             $savedPage->delete();
@@ -400,7 +399,7 @@ class BookController extends Controller
 
         $unity = Unity::find($unity_id);
 
-        $subject = Subject::where('user_id', $user->sub)->where('id', $unity->subject_id)->first();
+        $subject = Subject::where('user_id', $user->sub)->where('id', $unity->subject_id)->where('year_id', $user->year_id)->first();
 
         if ($subject) {
             $savedPages = SavedPage::where('unity_id', $unity_id)->orderBy('page', 'asc')->get();
@@ -408,7 +407,7 @@ class BookController extends Controller
             $data = array(
                 'status' => 'success',
                 'code' => 200,
-                'savedPages' => $savedPages
+                'savedPages' => $savedPages,
             );
         } else {
             $data = array(
