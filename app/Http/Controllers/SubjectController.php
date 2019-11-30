@@ -168,7 +168,7 @@ class SubjectController extends Controller
                 $subject->tasks_percentage = $params->tasks_percentage;
                 $subject->exams_percentage = $params->exams_percentage;
                 $subject->projects_percentage = $params->projects_percentage;
-                $subject->behaviour_percentage = $params->behaviour_percentage;
+                $subject->behavior_percentage = $params->behavior_percentage;
                 $subject->tasks_has_mark = $params->tasks_has_mark;
                 $subject->year_id = $user->year_id;
 

@@ -9,6 +9,21 @@ use Validator;
 
 class EvaluationController extends Controller
 {
+    // Evaluaciones
+    public function index(Request $request)
+    {
+        $user = app('App\Http\Controllers\UserController')
+            ->getAuth($request->header('Authorization'));
+
+        $evaluations = Evaluation::where('year_id', $user->year_id)->where('user_id', $user->sub)->get();
+
+        return response()->json([
+            'code' => 200,
+            'status' => 'success',
+            'evaluations' => $evaluations,
+        ]);
+    }
+
     // Añadir evaluación
     public function store(Request $request)
     {

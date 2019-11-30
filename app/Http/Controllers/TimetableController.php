@@ -151,7 +151,7 @@ class TimetableController extends Controller
 
     public function DeleteTimetable($timetable)
     {
-        $timetableSubjects = TimetableSubject::where('timetable_id', $timetable->id)->where('year_id', $user->year_id)->get();
+        $timetableSubjects = TimetableSubject::where('timetable_id', $timetable->id)->get();
 
         foreach ($timetableSubjects as $timetableSubject) {
             $timetableSubject->delete();

@@ -81,7 +81,9 @@ class UnityController extends Controller
                     $unity = new Unity();
 
                     $unity->subject_id = $params->subject_id;
+                    $unity->evaluation_id = $params->evaluation_id;
                     $unity->number = $params->number;
+
                     $unity->save();
 
                     $data = array(
@@ -134,6 +136,7 @@ class UnityController extends Controller
                     $subject = Subject::where('user_id', $user->sub)->where('id', $unity->subject_id)->where('year_id', $user->year_id)->first();
 
                     if ($subject && is_object($subject)) {
+                        $unity->evaluation_id = $params->evaluation_id;
                         $unity->number = $params->number;
 
                         $unity->update();
