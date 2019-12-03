@@ -72,6 +72,8 @@ Route::get('exam/done/{exam_id}', 'ExamController@changeStatus');
 
 Route::get('events/not-passed', 'EventController@indexNotPassed');
 Route::get('events', 'EventController@index');
+Route::get('event/task/{id}', 'EventController@taskEvent');
+Route::get('event/exam/{id}', 'EventController@examEvent');
 Route::post('event', 'EventController@store');
 Route::put('event/{id}', 'EventController@update');
 Route::delete('event/{id}', 'EventController@destroy');

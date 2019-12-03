@@ -209,6 +209,7 @@ class TaskController extends Controller
                     $task->unity_id = $params->unity_id;
                     $task->title = $params->title;
                     $task->description = $params->description;
+                    $task->mark = $params->mark;
                     $task->delivery_date = $params->delivery_date;
                     $task->done = false;
                     $task->save();
@@ -284,6 +285,7 @@ class TaskController extends Controller
                         $task->book_id = $params->book_id;
                         $task->title = $params->title;
                         $task->description = $params->description;
+                        $task->mark = $params->mark;
                         $task->delivery_date = $params->delivery_date;
 
                         $task->update();
@@ -327,7 +329,11 @@ class TaskController extends Controller
                     $page->delete();
                 }
 
-                Event::where('user_id', $user->sub)->where('task_id', $task->id)->first()->delete();
+                $event = Event::where('user_id', $user->sub)->where('task_id', $task->id)->first();
+
+                if ($event && is_object($event)) {
+                    $event->delete();
+                }
 
                 $task->delete();
 

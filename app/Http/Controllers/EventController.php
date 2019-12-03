@@ -39,6 +39,36 @@ class EventController extends Controller
         ]);
     }
 
+    // Evento por ID de tarea
+    public function taskEvent(Request $request, $task_id)
+    {
+        $user = app('App\Http\Controllers\UserController')
+            ->getAuth($request->header('Authorization'));
+
+        $event = Event::where('user_id', $user->sub)->where('task_id', $task_id)->first();
+
+        return response()->json([
+            'code' => 200,
+            'status' => 'success',
+            'event' => $event,
+        ]);
+    }
+
+    // Evento por ID de examen
+    public function examEvent(Request $request, $exam_id)
+    {
+        $user = app('App\Http\Controllers\UserController')
+            ->getAuth($request->header('Authorization'));
+
+        $event = Event::where('user_id', $user->sub)->where('exam_id', $exam_id)->first();
+
+        return response()->json([
+            'code' => 200,
+            'status' => 'success',
+            'event' => $event,
+        ]);
+    }
+
     // Añadir evento
     public function store(Request $request)
     {

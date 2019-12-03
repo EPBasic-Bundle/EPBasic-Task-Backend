@@ -265,7 +265,11 @@ class ExamController extends Controller
             $subject = Subject::where('user_id', $user->sub)->where('id', $exam->subject_id)->where('year_id', $user->year_id)->first();
 
             if ($subject && is_object($subject)) {
-                Event::where('user_id', $user->sub)->where('exam_id', $exam->id)->first()->delete();
+                $event = Event::where('user_id', $user->sub)->where('exam_id', $exam->id)->first();
+
+                if ($event && is_object($event)) {
+                    $event->delete();
+                }
 
                 $exam->delete();
 
