@@ -24,6 +24,21 @@ class EventController extends Controller
         ]);
     }
 
+    // Eventos
+    public function indexNotPassed(Request $request)
+    {
+        $user = app('App\Http\Controllers\UserController')
+            ->getAuth($request->header('Authorization'));
+
+        $events = Event::where('user_id', $user->sub)->where('start', '>=', date('Y-m-d'))->get();
+
+        return response()->json([
+            'code' => 200,
+            'status' => 'success',
+            'events' => $events,
+        ]);
+    }
+
     // Añadir evento
     public function store(Request $request)
     {
@@ -145,7 +160,6 @@ class EventController extends Controller
     {
         $user = app('App\Http\Controllers\UserController')
             ->getAuth($request->header('Authorization'));
-
 
         $event = Event::where('id', $id)->where('user_id', $user->sub)->first();
 

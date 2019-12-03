@@ -70,6 +70,7 @@ Route::get('exercise/done/{exercise_id}', 'ExerciseController@changeStatus');
 Route::get('task/done/{task_id}', 'TaskController@changeStatus');
 Route::get('exam/done/{exam_id}', 'ExamController@changeStatus');
 
+Route::get('events/not-passed', 'EventController@indexNotPassed');
 Route::get('events', 'EventController@index');
 Route::post('event', 'EventController@store');
 Route::put('event/{id}', 'EventController@update');
