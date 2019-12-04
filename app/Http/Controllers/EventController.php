@@ -30,7 +30,7 @@ class EventController extends Controller
         $user = app('App\Http\Controllers\UserController')
             ->getAuth($request->header('Authorization'));
 
-        $events = Event::where('user_id', $user->sub)->where('start', '>=', date('Y-m-d'))->get();
+        $events = Event::where('user_id', $user->sub)->whereNotNull('exam_id')->where('start', '>=', date('Y-m-d'))->get();
 
         return response()->json([
             'code' => 200,
@@ -61,6 +61,21 @@ class EventController extends Controller
             ->getAuth($request->header('Authorization'));
 
         $event = Event::where('user_id', $user->sub)->where('exam_id', $exam_id)->first();
+
+        return response()->json([
+            'code' => 200,
+            'status' => 'success',
+            'event' => $event,
+        ]);
+    }
+
+    // Evento por ID de proyecto
+    public function projectEvent(Request $request, $project_id)
+    {
+        $user = app('App\Http\Controllers\UserController')
+            ->getAuth($request->header('Authorization'));
+
+        $event = Event::where('user_id', $user->sub)->where('project_id', $project_id)->first();
 
         return response()->json([
             'code' => 200,
@@ -105,6 +120,7 @@ class EventController extends Controller
                 $event->secondary_color = $params->secondary_color;
                 $event->task_id = $params->task_id;
                 $event->exam_id = $params->exam_id;
+                $event->project_id = $params->project_id;
 
                 $event->save();
 

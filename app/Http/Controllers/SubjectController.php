@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Exam;
+use App\Project;
 use App\Subject;
 use App\Task;
 use App\Unity;
@@ -62,6 +63,7 @@ class SubjectController extends Controller
             foreach ($subjects as $subject) {
                 $subject->tasks = Task::where('subject_id', $subject->id)->where('done', 0)->get();
                 $subject->exams = Exam::where('subject_id', $subject->id)->where('done', 0)->get();
+                $subject->projects = Project::where('subject_id', $subject->id)->where('done', 0)->get();
             }
 
             $data = array(

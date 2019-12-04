@@ -188,7 +188,6 @@ class TaskController extends Controller
                 'subject_id' => 'required',
                 'unity_id' => 'required',
                 'title' => 'required',
-                //'delivery_date' => 'required',
             ]);
 
             if ($validate->fails()) {

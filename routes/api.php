@@ -66,14 +66,24 @@ Route::post('exam', 'ExamController@store');
 Route::put('exam/{id}', 'ExamController@update');
 Route::delete('exam/{id}', 'ExamController@destroy');
 
+Route::get('projects/todo/{subject_id}', 'ProjectController@indexToDo');
+Route::get('projects/{unity_id}', 'ProjectController@index');
+Route::get('project/{id}', 'ProjectController@detail');
+Route::put('project/start/{project_id}', 'ProjectController@updateExamDay');
+Route::post('project', 'ProjectController@store');
+Route::put('project/{id}', 'ProjectController@update');
+Route::delete('project/{id}', 'ProjectController@destroy');
+
 Route::get('exercise/done/{exercise_id}', 'ExerciseController@changeStatus');
 Route::get('task/done/{task_id}', 'TaskController@changeStatus');
 Route::get('exam/done/{exam_id}', 'ExamController@changeStatus');
+Route::get('project/done/{project_id}', 'ProjectController@changeStatus');
 
 Route::get('events/not-passed', 'EventController@indexNotPassed');
 Route::get('events', 'EventController@index');
 Route::get('event/task/{id}', 'EventController@taskEvent');
 Route::get('event/exam/{id}', 'EventController@examEvent');
+Route::get('event/project/{id}', 'EventController@projectEvent');
 Route::post('event', 'EventController@store');
 Route::put('event/{id}', 'EventController@update');
 Route::delete('event/{id}', 'EventController@destroy');
