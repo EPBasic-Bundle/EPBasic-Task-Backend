@@ -97,7 +97,6 @@ Route::post('year', 'YearController@store');
 Route::put('year/{id}', 'YearController@update');
 Route::delete('year/{id}', 'YearController@destroy');
 
-Route::get('evaluations/marks', 'EvaluationController@indexMarks');
 Route::get('evaluations', 'EvaluationController@index');
 Route::post('evaluation', 'EvaluationController@store');
 Route::put('evaluation/{id}', 'EvaluationController@update');
@@ -105,3 +104,7 @@ Route::put('evaluation/{id}', 'EvaluationController@update');
 Route::delete('evaluation/{id}', 'EvaluationController@destroy');
 
 Route::get('generate-pdf', 'PDFGeneratorController@index');
+
+Route::get('report-cards', 'ReportCardController@index');
+Route::post('report-card', 'ReportCardController@store');
+Route::delete('report-card/{id}', 'ReportCardController@destroy');

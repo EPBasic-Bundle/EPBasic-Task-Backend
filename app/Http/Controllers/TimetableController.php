@@ -69,8 +69,20 @@ class TimetableController extends Controller
             } else {
                 $timetable = Timetable::where('user_id', $user->sub)->where('year_id', $user->year_id)->first();
 
-                if ($timetable) {
-                    $this->DeleteTimetable($timetable);
+                if ($timetable && is_object($timetable)) {
+                    $timetable->load('subjects');
+
+                    foreach ($timetable['subjects'] as $timetableSubject) {
+                        $timetableSubject->delete();
+                    }
+
+                    $timetable->load('hours');
+
+                    foreach ($timetable['hours'] as $timetableHour) {
+                        $timetableHour->delete();
+                    }
+
+                    $timetable->delete();
                 }
 
                 $timetable = new Timetable();
@@ -148,22 +160,4 @@ class TimetableController extends Controller
         }
         return response()->json($data, $data['code']);
     }
-
-    public function DeleteTimetable($timetable)
-    {
-        $timetableSubjects = TimetableSubject::where('timetable_id', $timetable->id)->get();
-
-        foreach ($timetableSubjects as $timetableSubject) {
-            $timetableSubject->delete();
-        }
-
-        $timetableHours = TimetableHour::where('timetable_id', $timetable->id)->get();
-
-        foreach ($timetableHours as $timetableHour) {
-            $timetableHour->delete();
-        }
-
-        $timetable->delete();
-    }
-
 }

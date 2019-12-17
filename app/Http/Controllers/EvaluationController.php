@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Evaluation;
-use App\Mark;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Validator;
@@ -17,25 +16,6 @@ class EvaluationController extends Controller
             ->getAuth($request->header('Authorization'));
 
         $evaluations = Evaluation::where('year_id', $user->year_id)->where('user_id', $user->sub)->get();
-
-        return response()->json([
-            'code' => 200,
-            'status' => 'success',
-            'evaluations' => $evaluations,
-        ]);
-    }
-
-    // Evaluaciones con notas
-    public function indexMarks(Request $request)
-    {
-        $user = app('App\Http\Controllers\UserController')
-            ->getAuth($request->header('Authorization'));
-
-        $evaluations = Evaluation::where('year_id', $user->year_id)->where('user_id', $user->sub)->get();
-
-        foreach ($evaluations as $evaluation) {
-            $evaluation->marks = Mark::where('evaluation_id', $evaluation->id)->get();
-        }
 
         return response()->json([
             'code' => 200,
