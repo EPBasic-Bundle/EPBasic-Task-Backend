@@ -90,10 +90,66 @@ class SubjectController extends Controller
         $subject = Subject::where('id', $id)->where('user_id', $user->sub)->where('year_id', $user->year_id)->first();
 
         if ($subject && is_object($subject)) {
-            foreach ($subject->units as $unity) {
-                $subject->tasks = Task::where('unity_id', $unity->id)->get();
-                $subject->exams = Task::where('unity_id', $unity->id)->get();
+            $units = Unity::where('subject_id', $subject->id)->get();
+
+            $subject_units = [];
+
+            if ($units && is_object($units)) {
+                foreach ($units as $unity) {
+                    array_push(
+                        $subject_units, array(
+                            'tasks' => Task::where('unity_id', $unity->id)->get(),
+                            'exams' => Exam::where('unity_id', $unity->id)->get(),
+                            'projects' => Project::where('unity_id', $unity->id)->get(),
+                        )
+                    );
+                }
             }
+
+            $subject->units = $subject_units;
+
+            $data = array(
+                'code' => 200,
+                'status' => 'success',
+                'subject' => $subject,
+            );
+        } else {
+            $data = array(
+                'code' => 200,
+                'status' => 'error',
+            );
+        }
+
+        return response()->json($data, $data['code']);
+    }
+
+    // Asignatura con TODO
+    public function subjectEvaluationWithAll(Request $request, $subject_id, $evaluation_id)
+    {
+        $user = app('App\Http\Controllers\UserController')
+            ->getAuth($request->header('Authorization'));
+
+        $subject = Subject::where('id', $subject_id)->where('user_id', $user->sub)->where('year_id', $user->year_id)->first();
+
+        if ($subject && is_object($subject)) {
+            $units = Unity::where('subject_id', $subject->id)->where('evaluation_id', $evaluation_id)->get();
+
+            $subject_units = [];
+
+            foreach ($units as $unity) {
+                array_push($subject_units,
+                    array(
+                        'unity' => $unity,
+                        'data' => array(
+                            'tasks' => Task::where('unity_id', $unity->id)->get(),
+                            'exams' => Exam::where('unity_id', $unity->id)->get(),
+                            'projects' => Project::where('unity_id', $unity->id)->get(),
+                        ),
+                    )
+                );
+            }
+
+            $subject->units = $subject_units;
 
             $data = array(
                 'code' => 200,
