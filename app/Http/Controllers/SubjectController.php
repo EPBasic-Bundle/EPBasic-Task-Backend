@@ -139,7 +139,13 @@ class SubjectController extends Controller
             foreach ($units as $unity) {
                 array_push($subject_units,
                     array(
-                        'unity' => $unity,
+                        'id' => $unity->id,
+                        'subject_id' => $unity->subject_id,
+                        'evaluation_id' => $unity->evaluation_id,
+                        'number' => $unity->number,
+                        'created_at' => $unity->updated_at,
+                        'updated_at' => $unity->created_at,
+
                         'data' => array(
                             'tasks' => Task::where('unity_id', $unity->id)->get(),
                             'exams' => Exam::where('unity_id', $unity->id)->get(),
